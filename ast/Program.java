@@ -17,4 +17,9 @@ public class Program {
 
         System.out.println("}");
     }
+
+    // TODO 
+    public int run() {
+        return 0;
+    }
 }

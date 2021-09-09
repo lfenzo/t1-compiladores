@@ -15,7 +15,6 @@ public class WhileStat extends Stat {
         //   stat1
         //   stat2
         // }
-
         System.out.printf("\twhile (");
         this.expr.genC();
         System.out.printf(") ");

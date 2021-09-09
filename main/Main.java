@@ -1,6 +1,6 @@
 public class Main {
     public static void main( String []args ) {
-        char []input = "".toCharArray();
+        String input = "teste do commpilador";
 
         Compilador compiler = new Compilador();
 

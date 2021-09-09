@@ -14,5 +14,4 @@ public class AssignStat extends Stat {
         this.expr.genC();
         System.out.printf(";\n");
     }
-
 }

@@ -1,14 +1,17 @@
 public class SimpleExpr {
 
-    private int value;
+    //private int value;
 
     @Override
     public void genC() {
 
     }
 
-    @Override
-    public Number getValue() {
-        return value;
-    }
+//    @Override
+//    public Number getValue() {
+//        return value;
+//    }
 }
+
+Expr
+SimpleExp

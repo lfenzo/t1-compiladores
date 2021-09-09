@@ -10,9 +10,9 @@ public class StatList {
 
     public void genC() {
         for (Stat s : this.statements) {
-            System.out.println("\t{");
+            System.out.println("\t{\n");
             s.genC(); // cada um dos statements deve gerar a sua propria saida;
-            System.out.println("\t}");
+            System.out.println("\t}\n");
         }
     }
 }
