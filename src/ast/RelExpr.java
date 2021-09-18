@@ -6,12 +6,14 @@ public class RelExpr {
 	private AddExpr expr_dir = null;
 	private RelOp operador = null;
 	
+	// construtor para [ AddExpr RelOp Addexpr ] 
 	public RelExpr(AddExpr expr1, RelOp operador, AddExpr expr2) {
 		this.expr_esq = expr1;
 		this.operador = operador;
 		this.expr_dir = expr2;
 	}
 	
+	// construtor para o caso [ AddExpr ]
 	public RelExpr(AddExpr expr) {
 		this.expr_esq = expr;
 	}

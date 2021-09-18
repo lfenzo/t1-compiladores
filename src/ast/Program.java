@@ -12,6 +12,7 @@ public class Program {
 
     public void genC() {
         System.out.println("#include <stdio.h>");
+        System.out.println();
         System.out.println("void main(int argc, void *argv) {");
 
         this.varlist.genC();
@@ -20,7 +21,6 @@ public class Program {
         System.out.println("}");
     }
 
-    // TODO 
     public int run() {
         return 0;
     }
