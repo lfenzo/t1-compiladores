@@ -1,5 +1,7 @@
 package main;
 
+import lexer.Symbol;
+
 public class Main {
 	public static void main(String []args) {
 		
@@ -7,7 +9,17 @@ public class Main {
 
 		Compiler comp = new Compiler();
 		
-		comp.compile(input);		
+		Symbol a = Symbol.WHILE;
+		Symbol b = Symbol.ID;
+
+		Symbol esperado = a;
+		
+		if (a == b) {
+			System.out.println("funcionou;");
+		}
+		else 
+			System.out.println("'"+ esperado + "' esperado.");
+//		comp.compile(input);		
 	}
 }
 

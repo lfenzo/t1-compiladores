@@ -3,32 +3,45 @@ package lexer;
 public enum Symbol {
 	 
 	EOF("eof"),
-    IDENT("Identifier"),
-    NUMBER("Number"),
-    PLUS("+"),
-    MINUS("-"),
-    MULT("*"),
-    DIV("/"),
-    LT("<"),
-    LE("<="),
-    GT(">"),
-    GE(">="),
-    NEQ("!="),
-    EQ("=="),
-    ASSIGN("="),
-    LEFTPAR("("),
-    RIGHTPAR(")"),
-    SEMICOLON(";"),
-    VAR("var"),
-    BEGIN("begin"),
-    END("end"),
-    IF("if"),
-    THEN("then"),
-    ELSE("else"),
-    ENDIF("endif"),
-    COMMA(","),
-    READ("read"),
-    WRITE("write");
+    
+    
+    // tokens com 1 charactare
+    PLUS			("+"),
+    MINUS			("-"),
+    MULT			("*"),
+    DIV				("/"),
+    PERC			("%"),
+    LT				("<"),
+    GT				(">"),
+    ASSIGN			("="),
+    OPEN_PAR		("("),
+    CLOSE_PAR		(")"),
+    SEMICOLON		(";"),
+    COMMA			(","),
+    OPEN_CBRACES	("{"),
+    CLOSE_CBRACES	("}"),
+    NOT				("!"),
+
+    // tokens com 2 caracteres
+    LE				("<="),
+    GE				(">="),
+    NEQ				("!="),
+    EQ				("=="),
+    IN				("in"),
+    TWO_DOTS		(".."),
+    
+    // tokens de keywords e outros
+    IF 				("if"),
+    ELSE			("else"),
+    VAR				("var"),
+    FOR				("for"),
+    WHILE			("while"),
+    PRINT			("print"),
+    PRINT_LINE		("println"),
+    ID				("Identifier"),
+    NUMBER			("Number"),
+
+    WRITE			("write");
 
 	Symbol(String name) {
         this.name = name;
