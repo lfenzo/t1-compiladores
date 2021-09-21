@@ -32,6 +32,7 @@ public enum Symbol {
     
     // tokens de keywords e outros
     IF 				("if"),
+    INT				("Int"),
     ELSE			("else"),
     VAR				("var"),
     FOR				("for"),

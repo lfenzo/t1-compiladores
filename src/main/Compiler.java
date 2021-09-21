@@ -9,7 +9,7 @@ public class Compiler {
 	private int tokenPos;
 	private int lineNumber;
 	private char []input;
-	private char ident;
+	private String ident;
 	private int number;
 	
 	public Compiler() {
@@ -18,7 +18,7 @@ public class Compiler {
 	
 	public void compile(char []p_input) {
         input = p_input;
-        input[input.length - 1] = '\0';
+        //input[input.length] '\0';
         tokenPos = 0;
         nextToken();
         program();
@@ -26,12 +26,11 @@ public class Compiler {
         	error("Fim de arquivo não esparado.");
         
         //return e;
-
     }
 	
 	// Program ::= VarList { Stat } 
 	private void program() {
-		stat();
+		varlist();
 		while (token == Symbol.FOR
 				|| token == Symbol.WHILE
 				|| token == Symbol.IF
@@ -42,6 +41,21 @@ public class Compiler {
 		}
 	}
 	
+	// VarList ::= { "var" Int Ident ";" }
+	private void varlist() {
+		while (token == Symbol.VAR) {
+			var();
+		}
+	}
+	
+	// var ::= "var Int" ident ";"
+	private void var() {
+		this.nextToken(); // come o token 'var'
+		this.checkSymbol(Symbol.INT);
+		this.checkSymbol(Symbol.ID);
+		this.checkSymbol(Symbol.SEMICOLON);
+	}
+
 	// Stat ::= AssignStat | IfStat | ForStat | PrintStat | PrintlnStat | WhileStat
 	private void stat() {
 		switch (token) {
@@ -50,12 +64,16 @@ public class Compiler {
 			assignStat();
 			break;
 			
-//		case IF:
-//			ifStat();
-//			break;
+		case IF:
+			ifStat();
+			break;
 			
 		case FOR:
 			forStat();
+			break;
+		
+		case WHILE:
+			whileStat();
 			break;
 				
 		case PRINT:
@@ -66,71 +84,39 @@ public class Compiler {
 			printlnStat();
 			break;
 		
-//		z	break;
-		
 		default:
 			error("Erro interno do compilador...");
 		}
 	}
-
-	// PrintStat ::= "print" Expr ";"
-	private void printStat() {
-		this.nextToken(); // come o token "print"
-		
-		expr();
-		
-		if (token != Symbol.SEMICOLON)
-			error("';' esperado");
-		
-		this.nextToken();
-	}
 	
-	// PrintStat ::= "println" Expr ";"
-	private void printlnStat() {
-		this.nextToken(); // come o token "print"
+	// WhileStat ::= "while" Expr StatList
+	private void whileStat() {
+		this.nextToken(); // come o token "while"
 		
 		expr();
-		
-		if (token != Symbol.SEMICOLON)
-			error("';' esperado");
-		
-		this.nextToken();
+		statList();
 	}
 
-	// "for" Id "in" Expr ".." Expr StatList
-	private void forStat() {
-		this.nextToken(); // come o token 'for'
+	// IfStat ::= "if" Expr StatList [ "else" StatList ]
+	private void ifStat() {
+		this.nextToken(); // come o token "if"
 		
-		if (token == Symbol.ID) {
-			
-			char id = this.ident;
-			this.nextToken();
-			
-			if (token != Symbol.IN)
-				error("'in' esperado");
-			
-			this.nextToken();
+		expr();
+		statList();
+		
+		if (token == Symbol.ELSE) {
+			this.nextToken(); // come o token "else"
 			expr();
-			
-			if (token != Symbol.TWO_DOTS)
-				error("'..' esperado");
-			
-			this.nextToken();
-			expr();
-			
 			statList();
-		}
-		else
-			error("'=' esperado");
-		
+		}	
 	}
 
-	// StatList ::= "{" { Stat } "}" 
+	// StatList ::= "{" { Stat } "}"
 	private void statList() {
-		if (token != Symbol.OPEN_CBRACES) {
-			error("{ esperado");
-		}
-		this.nextToken();
+		
+		// nextToken(); ??
+		
+		this.checkSymbol(Symbol.OPEN_CBRACES);
 		
 		while (token == Symbol.FOR
 				|| token == Symbol.WHILE
@@ -141,38 +127,75 @@ public class Compiler {
 			stat();
 		}
 		
-		if (token != Symbol.CLOSE_CBRACES) {
-			error("} esperado");
-		}
+		this.checkSymbol(Symbol.CLOSE_CBRACES);
+	}
+
+	// PrintStat ::= "print" Expr ";"
+	private void printStat() {
 		
-		this.nextToken();
+		this.nextToken(); // come o token "print"
+		expr();
+		this.checkSymbol(Symbol.SEMICOLON);
+	}
+	
+	// PrintStat ::= "println" Expr ";"
+	private void printlnStat() {
+		
+		this.nextToken(); // come o token "println"		
+		expr();
+		this.checkSymbol(Symbol.SEMICOLON);
+	}
+
+	// "for" Id "in" Expr ".." Expr StatList
+	private void forStat() {
+		
+		this.nextToken(); // come o token 'for'
+		
+		this.checkSymbol(Symbol.ID);
+		this.checkSymbol(Symbol.IN);
+		
+		expr();
+		
+		this.checkSymbol(Symbol.TWO_DOTS);
+		
+		expr();
+		
+		statList();
+		
+//		if (token == Symbol.ID) {
+//			
+//			String id = this.ident;
+//			this.nextToken();
+//			
+//			if (token != Symbol.IN)
+//				error("'in' esperado");
+//			
+//			this.nextToken();
+//			expr();
+//			
+//			if (token != Symbol.TWO_DOTS)
+//				error("'..' esperado");
+//			
+//			this.nextToken();
+//			expr();
+//			
+//			statList();
+//		}
+//		else
+//			error("'=' esperado");
+		
 	}
 
 	// AssignStat ::= Ident "=" Expr ";"
 	private void assignStat() {
-		char ident = this.ident;
+		String ident = this.ident;
 		this.nextToken();
 		
-		
-		// if not checkSymbol(....... 
 		this.checkSymbol(Symbol.ASSIGN);
-//		if (token == Symbol.ASSIGN)
-//			this.nextToken();
-//		else
-//			error("'=' esperado");
 		
 		expr();
 		
 		this.checkSymbol(Symbol.SEMICOLON);
-//		if (token == Symbol.SEMICOLON)
-//			this.nextToken();
-//		else
-//			error("';' esperado");
-	}
-
-	private void error() {
-		// TODO Auto-generated method stub
-		
 	}
 
 	private Expr expr() {
@@ -191,7 +214,7 @@ public class Compiler {
 			char ch = input[tokenPos];
 			
 			// recolhe os identificadores com letras (palavras chave + statements)
-			if (Character.isLetter(ch)) {
+			if (Character.isLetter(ch) || ch == '_') {
 				
 				if (tokenPos + 2 < input.length
 						&& input[tokenPos    ] == 'f'
@@ -248,6 +271,13 @@ public class Compiler {
 					token = Symbol.VAR;
 					tokenPos += 3;
 				}
+				else if (tokenPos + 2 < input.length
+							&& input[tokenPos    ] == 'I'
+							&& input[tokenPos + 1] == 'n'
+							&& input[tokenPos + 2] == 't') {
+					token = Symbol.INT;
+					tokenPos += 3;
+				}
 				else if (tokenPos + 4 < input.length
 							&& input[tokenPos    ] == 'w'
 							&& input[tokenPos + 1] == 'h'
@@ -258,10 +288,17 @@ public class Compiler {
 					tokenPos += 5;
 				}
 				else {
+					String identifier = "";
+					
+					while (tokenPos < input.length && (Character.isLetter(ch = input[tokenPos])
+													   || Character.isDigit(ch = input[tokenPos])
+													   || ch == '_') ) {
+						identifier += input[tokenPos];
+						tokenPos++;
+					}
+					
 					token = Symbol.ID;
-					// TODO colocar while para pegar os identificadores com multiplas letras.
-					tokenPos++;
-					this.ident = ch;
+					this.ident = identifier;
 				}
 
 			// recolhe os números
@@ -277,12 +314,30 @@ public class Compiler {
 				
 				token = Symbol.NUMBER;
 			}
-			// tokens com 1 ou dois characteres.
+			// tokens com 1 ou 2 characteres.
 			else {
 				switch (ch) {
 				
 				case '=':
-					token = Symbol.ASSIGN;
+					
+					tokenPos++;
+					
+					if (tokenPos < input.length && input[tokenPos] == '=') {
+						token = Symbol.EQ;
+						tokenPos++;
+					}
+					else
+						token = Symbol.ASSIGN;
+					
+					break;
+					
+				case '<':
+					token = Symbol.LT;
+					tokenPos++;
+					break;
+					
+				case '>':
+					token = Symbol.GT;
 					tokenPos++;
 					break;
 				
@@ -310,11 +365,6 @@ public class Compiler {
 					token = Symbol.CLOSE_CBRACES;
 					tokenPos++;
 					break;
-					
-				case '<':
-					token = Symbol.LT;
-					tokenPos++;
-					break;
 				}
 			}
 		}
@@ -337,6 +387,6 @@ public class Compiler {
 			if (tokenPos >= input.length)
 				tokenPos = input.length;
 		
-		throw new RuntimeException("Minha mensagem de erro");
+		throw new RuntimeException(msg);
 	}
 }

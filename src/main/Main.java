@@ -1,26 +1,14 @@
 package main;
 
-import lexer.Symbol;
-
 public class Main {
 	public static void main(String []args) {
 		
-		char []input = "var Int s;".toCharArray();
+		char []input = "var Int boi;;".toCharArray();
 
 		Compiler comp = new Compiler();
 		
-		Symbol a = Symbol.WHILE;
-		Symbol b = Symbol.ID;
-
-		Symbol esperado = a;
+		comp.compile(input);
 		
-		if (a == b) {
-			System.out.println("funcionou;");
-		}
-		else 
-			System.out.println("'"+ esperado + "' esperado.");
-//		comp.compile(input);		
+		System.out.println("Compilado com sucesso!");
 	}
 }
-
-
