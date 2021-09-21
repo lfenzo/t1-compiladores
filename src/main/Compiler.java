@@ -23,9 +23,13 @@ public class Compiler {
         nextToken();
         program();
         
-        if (token != Symbol.EOF)
+        // token pos estará 1 posiç[ao apos o termino da string de entrada.
+        if (tokenPos == (input.length + 1)) {
         	error("Fim de arquivo não esparado.");
-        
+        }
+        else
+        	System.out.println("compilação terminada sem erros");
+
         //return e;
     }
 	
@@ -35,7 +39,7 @@ public class Compiler {
 		while (token == Symbol.FOR
 				|| token == Symbol.WHILE
 				|| token == Symbol.IF
-				|| token == Symbol.ASSIGN
+				|| token == Symbol.ID // assignStat é iniciado por um identificador
 				|| token == Symbol.PRINT
 				|| token == Symbol.PRINT_LINE) {
 			stat();
@@ -61,7 +65,7 @@ public class Compiler {
 	private void stat() {
 		switch (token) {
 		
-		case ASSIGN: assignStat(); break;
+		case ID: assignStat(); break; // assignStat é iniciado por um identificador
 			
 		case IF: ifStat(); break;
 			
@@ -107,10 +111,11 @@ public class Compiler {
 		
 		this.checkSymbol(Symbol.OPEN_CBRACES);
 		
+		
 		while (token == Symbol.FOR
 				|| token == Symbol.WHILE
 				|| token == Symbol.IF
-				|| token == Symbol.ASSIGN
+				|| token == Symbol.ID // assignStat começa com um identificador
 				|| token == Symbol.PRINT
 				|| token == Symbol.PRINT_LINE) {
 			stat();
@@ -148,30 +153,7 @@ public class Compiler {
 		this.checkSymbol(Symbol.TWO_DOTS);
 		
 		expr();
-		statList();
-		
-//		if (token == Symbol.ID) {
-//			
-//			String id = this.ident;
-//			this.nextToken();
-//			
-//			if (token != Symbol.IN)
-//				error("'in' esperado");
-//			
-//			this.nextToken();
-//			expr();
-//			
-//			if (token != Symbol.TWO_DOTS)
-//				error("'..' esperado");
-//			
-//			this.nextToken();
-//			expr();
-//			
-//			statList();
-//		}
-//		else
-//			error("'=' esperado");
-		
+		statList();	
 	}
 
 	// AssignStat ::= Ident "=" Expr ";"
@@ -191,13 +173,111 @@ public class Compiler {
 	//	MultExpr ::= SimpleExpr { MultOp SimpleExpr }
 	//	SimpleExpr ::= Number | ’(’ Expr ’)’ | "!" SimpleExpr| AddOp SimpleExpr | Ident
 	private void expr() {
-		this.nextToken();
 		
-		if (token == Symbol.NUMBER) {
-			
+		andExpr();
+		
+		if (token == Symbol.OR) {
+			this.nextToken(); // come o "||"
+			andExpr();
+		}
+	}
+	
+	// AndExpr ::= RelExpr [ "&&" RelExpr ]
+	private void andExpr() {
+		
+		relExpr();
+		
+		if (token == Symbol.AND) {
+			this.nextToken(); // come o '&&'
+			relExpr();
 		}
 	}
 
+	// RelExpr ::= AddExpr [ RelOp AddExpr ]
+	private void relExpr() {
+		
+		addExpr();
+				
+		if (token == Symbol.LT || token == Symbol.LE ||
+			token == Symbol.GT || token == Symbol.GE ||
+			token == Symbol.EQ || token == Symbol.NEQ) {
+			
+			this.nextToken(); // come o token do operador
+			addExpr();
+		}
+	}
+	
+	//	AddExpr ::= MultExpr { AddOp MultExpr }
+	private void addExpr() {
+		
+		multExpr();
+		
+		while (token == Symbol.PLUS || token == Symbol.MINUS) {
+			this.nextToken(); // come o operador (+ ou -)
+			multExpr();
+		}
+	}
+
+	// MultExpr ::= SimpleExpr { MultOp SimpleExpr }
+	private void multExpr() {	
+		
+		simpleExpr();
+		
+		while (token == Symbol.MULT || token == Symbol.DIV || token == Symbol.PERC) {
+			this.nextToken(); // come o operador (+ ou -)
+			simpleExpr();
+		}
+	}
+
+	//	SimpleExpr ::= Number | ’(’ Expr ’)’ | "!" SimpleExpr| AddOp SimpleExpr | Ident
+	private void simpleExpr() {
+		
+		switch (token) {
+		
+		case NUMBER:
+			number();
+			break;
+		
+		case OPEN_PAR:
+			this.nextToken(); // come o (
+			expr();
+			this.checkSymbol(Symbol.CLOSE_PAR);
+			break;
+			
+		case NOT:
+			this.nextToken(); // come o "!"
+			simpleExpr();
+			break;
+			
+		case PLUS:
+			this.nextToken(); // come o operador +
+			simpleExpr();
+			break;
+			
+		case MINUS:
+			this.nextToken(); // come o operador -
+			simpleExpr();
+			break;
+		
+		case ID:
+			String var_name = this.ident;
+			this.nextToken(); // come o token do identificado
+			
+		default:
+			break;
+		}
+	}
+
+	// Number ::= [’+’|’-’] Digit { Digit }
+	private void number() {
+		if (token == Symbol.PLUS || token == Symbol.MINUS) {
+			this.nextToken();
+		}
+		
+		this.checkSymbol(Symbol.NUMBER);
+	}
+
+	
 	public void nextToken() {
 		while (tokenPos < input.length &&
 				(input[tokenPos] == ' ' || input[tokenPos] == '\n' || input[tokenPos] == '\t') ) {
@@ -212,7 +292,8 @@ public class Compiler {
 			if (Character.isLetter(ch)
 					|| ch == '_'
 					|| ch == '|'
-					|| ch == '&') {
+					|| ch == '&'
+					|| ch == '.') {
 				
 				if (tokenPos + 1 < input.length
 							&& input[tokenPos    ] == '|'
@@ -224,6 +305,12 @@ public class Compiler {
 							&& input[tokenPos    ] == '&'
 							&& input[tokenPos + 1] == '&') {
 					token = Symbol.AND;
+					tokenPos += 2;
+				}
+				else if (tokenPos + 2 < input.length
+							&& input[tokenPos    ] == '.'
+							&& input[tokenPos + 1] == '.') {
+					token = Symbol.TWO_DOTS;
 					tokenPos += 2;
 				}
 				else if (tokenPos + 2 < input.length
@@ -378,7 +465,7 @@ public class Compiler {
 						token = Symbol.NOT;
 					
 					break;
-				
+					
 				case ';':
 					token = Symbol.SEMICOLON;
 					tokenPos++;
@@ -430,7 +517,7 @@ public class Compiler {
 			token = Symbol.EOF;
 	}
 	
-	// verifica se o token corrente é aquele esperado
+	// verifica se o token corrente é aquele esperado (se for avança, caso contrário lança um erro)
 	private void checkSymbol(Symbol esperado) {
 		if (token == esperado)
 			this.nextToken();
