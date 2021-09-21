@@ -22,6 +22,7 @@ public class Compiler {
         tokenPos = 0;
         nextToken();
         program();
+        
         if (token != Symbol.EOF)
         	error("Fim de arquivo não esparado.");
         
@@ -60,29 +61,17 @@ public class Compiler {
 	private void stat() {
 		switch (token) {
 		
-		case ASSIGN:
-			assignStat();
-			break;
+		case ASSIGN: assignStat(); break;
 			
-		case IF:
-			ifStat();
-			break;
+		case IF: ifStat(); break;
 			
-		case FOR:
-			forStat();
-			break;
+		case FOR: forStat(); break;
 		
-		case WHILE:
-			whileStat();
-			break;
+		case WHILE: whileStat(); break;
 				
-		case PRINT:
-			printStat();
-			break;
+		case PRINT: printStat(); break;
 			
-		case PRINT_LINE:
-			printlnStat();
-			break;
+		case PRINT_LINE: printlnStat(); break;
 		
 		default:
 			error("Erro interno do compilador...");
@@ -159,7 +148,6 @@ public class Compiler {
 		this.checkSymbol(Symbol.TWO_DOTS);
 		
 		expr();
-		
 		statList();
 		
 //		if (token == Symbol.ID) {
@@ -189,18 +177,25 @@ public class Compiler {
 	// AssignStat ::= Ident "=" Expr ";"
 	private void assignStat() {
 		String ident = this.ident;
-		this.nextToken();
+		this.nextToken(); // come o token "identificador"
 		
 		this.checkSymbol(Symbol.ASSIGN);
-		
 		expr();
-		
 		this.checkSymbol(Symbol.SEMICOLON);
 	}
 
-	private Expr expr() {
-		// TODO Auto-generated method stub
-		return null;
+	//  Expr ::= AndExpr [ "||" AndExpr ]
+	//	AndExpr ::= RelExpr [ "&&" RelExpr ]
+	//	RelExpr ::= AddExpr [ RelOp AddExpr ]
+	//	AddExpr ::= MultExpr { AddOp MultExpr }
+	//	MultExpr ::= SimpleExpr { MultOp SimpleExpr }
+	//	SimpleExpr ::= Number | ’(’ Expr ’)’ | "!" SimpleExpr| AddOp SimpleExpr | Ident
+	private void expr() {
+		this.nextToken();
+		
+		if (token == Symbol.NUMBER) {
+			
+		}
 	}
 
 	public void nextToken() {
@@ -214,12 +209,27 @@ public class Compiler {
 			char ch = input[tokenPos];
 			
 			// recolhe os identificadores com letras (palavras chave + statements)
-			if (Character.isLetter(ch) || ch == '_') {
+			if (Character.isLetter(ch)
+					|| ch == '_'
+					|| ch == '|'
+					|| ch == '&') {
 				
-				if (tokenPos + 2 < input.length
-						&& input[tokenPos    ] == 'f'
-						&& input[tokenPos + 1] == 'o'
-						&& input[tokenPos + 2] == 'r') {
+				if (tokenPos + 1 < input.length
+							&& input[tokenPos    ] == '|'
+							&& input[tokenPos + 1] == '|') {
+					token = Symbol.OR;
+					tokenPos += 2;
+				}
+				else if (tokenPos + 2 < input.length
+							&& input[tokenPos    ] == '&'
+							&& input[tokenPos + 1] == '&') {
+					token = Symbol.AND;
+					tokenPos += 2;
+				}
+				else if (tokenPos + 2 < input.length
+							&& input[tokenPos    ] == 'f'
+							&& input[tokenPos + 1] == 'o'
+							&& input[tokenPos + 2] == 'r') {
 					// TODO resolver probelma com variavel a la (for[+])
 					token = Symbol.FOR;
 					tokenPos += 3;
@@ -325,20 +335,48 @@ public class Compiler {
 					if (tokenPos < input.length && input[tokenPos] == '=') {
 						token = Symbol.EQ;
 						tokenPos++;
-					}
-					else
+					} else
 						token = Symbol.ASSIGN;
 					
 					break;
 					
 				case '<':
-					token = Symbol.LT;
+					
 					tokenPos++;
+					
+					// <=
+					if (tokenPos < input.length && input[tokenPos] == '=') {
+						token = Symbol.LE;
+						tokenPos++;
+					} else
+						token = Symbol.LT;
+					
+					break;
+
+				case '>':
+					
+					tokenPos++;
+					
+					// >=
+					if (tokenPos < input.length && input[tokenPos] == '=') {
+						token = Symbol.GE;
+						tokenPos++;
+					} else
+						token = Symbol.GT;
+					
 					break;
 					
-				case '>':
-					token = Symbol.GT;
+				case '!':
+					
 					tokenPos++;
+					
+					// !=
+					if (tokenPos < input.length & input[tokenPos] == '=') {
+						token = Symbol.NEQ;
+						tokenPos++;
+					} else
+						token = Symbol.NOT;
+					
 					break;
 				
 				case ';':
@@ -356,6 +394,16 @@ public class Compiler {
 					tokenPos++;
 					break;
 					
+				case '/':
+					token = Symbol.DIV;
+					tokenPos++;
+					break;
+					
+				case '%':
+					token = Symbol.PERC;
+					tokenPos++;
+					break;
+					
 				case '{':
 					token = Symbol.OPEN_CBRACES;
 					tokenPos++;
@@ -363,6 +411,16 @@ public class Compiler {
 					
 				case '}':
 					token = Symbol.CLOSE_CBRACES;
+					tokenPos++;
+					break;
+					
+				case '(':
+					token = Symbol.OPEN_PAR;
+					tokenPos++;
+					break;
+					
+				case ')':
+					token = Symbol.CLOSE_PAR;
 					tokenPos++;
 					break;
 				}

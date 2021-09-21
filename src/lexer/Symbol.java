@@ -4,7 +4,6 @@ public enum Symbol {
 	 
 	EOF("eof"),
     
-    
     // tokens com 1 charactare
     PLUS			("+"),
     MINUS			("-"),
@@ -29,6 +28,8 @@ public enum Symbol {
     EQ				("=="),
     IN				("in"),
     TWO_DOTS		(".."),
+    AND				("&&"),
+    OR				("||"),
     
     // tokens de keywords e outros
     IF 				("if"),
@@ -40,9 +41,7 @@ public enum Symbol {
     PRINT			("print"),
     PRINT_LINE		("println"),
     ID				("Identifier"),
-    NUMBER			("Number"),
-
-    WRITE			("write");
+    NUMBER			("Number");
 
 	Symbol(String name) {
         this.name = name;
