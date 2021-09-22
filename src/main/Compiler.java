@@ -27,10 +27,6 @@ public class Compiler {
         if (tokenPos == (input.length + 1)) {
         	error("Fim de arquivo não esparado.");
         }
-        else
-        	System.out.println("compilação terminada sem erros");
-
-        //return e;
     }
 	
 	// Program ::= VarList { Stat } 
@@ -165,11 +161,6 @@ public class Compiler {
 	}
 
 	//  Expr ::= AndExpr [ "||" AndExpr ]
-	//	AndExpr ::= RelExpr [ "&&" RelExpr ]
-	//	RelExpr ::= AddExpr [ RelOp AddExpr ]
-	//	AddExpr ::= MultExpr { AddOp MultExpr }
-	//	MultExpr ::= SimpleExpr { MultOp SimpleExpr }
-	//	SimpleExpr ::= Number | ’(’ Expr ’)’ | "!" SimpleExpr| AddOp SimpleExpr | Ident
 	private void expr() {
 		
 		andExpr();
@@ -377,7 +368,7 @@ public class Compiler {
 							&& input[tokenPos + 1] == 'h'
 							&& input[tokenPos + 2] == 'i'
 							&& input[tokenPos + 3] == 'l'
-							&& input[tokenPos + 3] == 'e') {
+							&& input[tokenPos + 4] == 'e') {
 					token = Symbol.WHILE;
 					tokenPos += 5;
 				}
@@ -478,6 +469,11 @@ public class Compiler {
 					tokenPos++;
 					break;
 					
+				case '*':
+					token = Symbol.MULT;
+					tokenPos++;
+					break;	
+				
 				case '/':
 					token = Symbol.DIV;
 					tokenPos++;

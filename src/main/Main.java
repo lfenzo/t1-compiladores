@@ -1,14 +1,20 @@
 package main;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
 public class Main {
-	public static void main(String []args) {
+	public static void main(String []args) throws IOException {
 		
-		char []input = "var Int s; var Int i; s = 0; for coisa in((3 + 9) - (10 - (10 - 9)))..100 { s = s + j; } println s; println abscdf;".toCharArray();
+		// carregando o arquivo a ser compilado para uma String
+		Path fileName = Path.of(System.getProperty("user.dir"), "src/main/teste.he");		
+		String str = Files.readString(fileName);
+		char []input = str.toCharArray();
+
 		
 		Compiler comp = new Compiler();
-
 		comp.compile(input);
-		
 		System.out.println("Compilado com sucesso!");
 	}
 }
