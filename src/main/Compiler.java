@@ -56,6 +56,7 @@ public class Compiler {
 	// var ::= "var Int" ident ";"
 	private void var() {
 		this.nextToken(); // come o token 'var'
+		
 		this.checkSymbol(Symbol.INT);
 		this.checkSymbol(Symbol.ID);
 		this.checkSymbol(Symbol.SEMICOLON);
@@ -106,11 +107,8 @@ public class Compiler {
 
 	// StatList ::= "{" { Stat } "}"
 	private void statList() {
-		
-		// nextToken(); ??
-		
+				
 		this.checkSymbol(Symbol.OPEN_CBRACES);
-		
 		
 		while (token == Symbol.FOR
 				|| token == Symbol.WHILE
@@ -317,7 +315,6 @@ public class Compiler {
 							&& input[tokenPos    ] == 'f'
 							&& input[tokenPos + 1] == 'o'
 							&& input[tokenPos + 2] == 'r') {
-					// TODO resolver probelma com variavel a la (for[+])
 					token = Symbol.FOR;
 					tokenPos += 3;
 				}
@@ -341,6 +338,17 @@ public class Compiler {
 					token = Symbol.ELSE;
 					tokenPos += 4;
 				}
+				else if (tokenPos + 6 < input.length
+							&& input[tokenPos    ] == 'p'
+							&& input[tokenPos + 1] == 'r'
+							&& input[tokenPos + 2] == 'i'
+							&& input[tokenPos + 3] == 'n'
+							&& input[tokenPos + 4] == 't'
+							&& input[tokenPos + 5] == 'l'							
+							&& input[tokenPos + 6] == 'n') {
+					token = Symbol.PRINT_LINE;
+					tokenPos += 7;
+				}
 				else if (tokenPos + 4 < input.length
 							&& input[tokenPos    ] == 'p'
 							&& input[tokenPos + 1] == 'r'
@@ -349,17 +357,6 @@ public class Compiler {
 							&& input[tokenPos + 4] == 't') {
 					token = Symbol.PRINT;
 					tokenPos += 5;
-				}
-				else if (tokenPos + 6 < input.length
-							&& input[tokenPos    ] == 'p'
-							&& input[tokenPos + 1] == 'r'
-							&& input[tokenPos + 2] == 'i'
-							&& input[tokenPos + 3] == 'n'
-							&& input[tokenPos + 3] == 't'
-							&& input[tokenPos + 3] == 'l'							
-							&& input[tokenPos + 4] == 'n') {
-					token = Symbol.PRINT_LINE;
-					tokenPos += 7;
 				}
 				else if (tokenPos + 2 < input.length
 							&& input[tokenPos    ] == 'v'
