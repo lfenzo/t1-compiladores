@@ -26,4 +26,8 @@ public class RelExpr {
 			this.expr_dir.genC();
 		}
 	}
+
+	public void setDirExpr(AddExpr addExpr) {
+		this.expr_dir = addExpr;	
+	}
 }

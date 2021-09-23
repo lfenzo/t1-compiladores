@@ -2,19 +2,19 @@ package ast;
 
 public class IfStat extends Stat {
 
-    private SimpleExpr expr;
+    private Expr expr;
     private StatList statlist_if; // statements para o caso do IF
     private StatList statlist_else = null; // statements para o caso do ELSE
     
     // construtor para o IF e ELSE
-    public IfStat(SimpleExpr expr, StatList statlist_if, StatList statlist_else) {
+    public IfStat(Expr expr, StatList statlist_if, StatList statlist_else) {
         this.expr = expr;
         this.statlist_if = statlist_if;
         this.statlist_else = statlist_else;
     }
 
     // construtor apenas para o IF
-    public IfStat(SimpleExpr expr, StatList statlist_if) {
+    public IfStat(Expr expr, StatList statlist_if) {
         this.expr = expr;
         this.statlist_if = statlist_if;
     }

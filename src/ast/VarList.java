@@ -4,7 +4,7 @@ import java.util.*;
 
 public class VarList {
 
-    private ArrayList<Var> variaveis;
+    private ArrayList<Var> variaveis = new ArrayList<Var>();
 
     public void addVar(Var newvar) {
         if (!varExists(newvar)) {
@@ -20,6 +20,14 @@ public class VarList {
             }
         }
         return false;
+    }
+    
+    public int getSize() {
+    	return this.variaveis.size();
+    }
+    
+    public Var getElement(int position) {
+    	return this.variaveis.get(position);
     }
 
     public void genC() {

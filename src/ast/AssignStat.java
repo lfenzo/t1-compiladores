@@ -3,9 +3,9 @@ package ast;
 public class AssignStat extends Stat {
 
     private String id;
-    private SimpleExpr expr; // 'expr' é uma subclasse de Expr
+    private Expr expr; // 'expr' é uma subclasse de Expr
 
-    public AssignStat(String id, SimpleExpr expr) {
+    public AssignStat(String id, Expr expr) {
         this.id = id;
         this.expr = expr;
     }

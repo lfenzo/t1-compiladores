@@ -53,7 +53,7 @@ public class Compiler {
 		
 		return p;
 	}
-	
+		
 	// VarList ::= { "var" Int Ident ";" }
 	private void varlist() {
 				
@@ -79,7 +79,17 @@ public class Compiler {
 		
 		return v;
 	}
-
+	
+	private Var getVar(String id) {
+		for(int i = 0; i < this.vList.getSize(); i++) {
+			if(this.vList.getElement(i).getId() == id) {
+				return this.vList.getElement(i);
+			}
+		}
+		error("Vari�vel n�o declarada");
+		return null;
+	}
+	
 	// Stat ::= AssignStat | IfStat | ForStat | PrintStat | PrintlnStat | WhileStat
 	private Stat stat() {
 		switch (token) {
@@ -110,6 +120,8 @@ public class Compiler {
 		StatList s = statList();
 		
 		WhileStat w = new WhileStat(e, s);
+		
+		return w;
 	}
 
 	// IfStat ::= "if" Expr StatList [ "else" StatList ]
@@ -193,14 +205,15 @@ public class Compiler {
 		
 		Expr end_expr = expr();
 		StatList s = statList();
+		Var v = this.getVar(id);
 		
-		ForStat for_stat = new ForStat(id, begin_expr, end_expr, s);
+		ForStat for_stat = new ForStat(v, begin_expr, end_expr, s);
 		
 		return for_stat;
 	}
 
 	// AssignStat ::= Ident "=" Expr ";"
-	private void assignStat() {
+	private AssignStat assignStat() {
 		String ident = this.ident;
 		this.nextToken(); // come o token "identificador"
 		
@@ -264,6 +277,8 @@ public class Compiler {
 			this.nextToken(); // come o operador (+ ou -)
 			a.setDirExpr(multExpr());
 		}
+		
+		return a;
 	}
 
 	// MultExpr ::= SimpleExpr { MultOp SimpleExpr }
@@ -275,36 +290,38 @@ public class Compiler {
 			this.nextToken(); // come o operador (+ ou -)
 			m.setExprDir(simpleExpr());
 		}
+		
+		return m;
 	}
 
 	//	SimpleExpr ::= Number | ’(’ Expr ’)’ | "!" SimpleExpr| AddOp SimpleExpr | Ident
-	private void simpleExpr() {
+	private SimpleExpr simpleExpr() {
 		
 		switch (token) {
 		
 		case NUMBER:
-			number();
+			return number();
 			break;
 		
 		case OPEN_PAR:
 			this.nextToken(); // come o (
-			expr();
+			return expr();
 			this.checkSymbol(Symbol.CLOSE_PAR);
 			break;
 			
 		case NOT:
 			this.nextToken(); // come o "!"
-			simpleExpr();
+			return simpleExpr();
 			break;
 			
 		case PLUS:
 			this.nextToken(); // come o operador +
-			simpleExpr();
+			return simpleExpr();
 			break;
 			
 		case MINUS:
 			this.nextToken(); // come o operador -
-			simpleExpr();
+			return simpleExpr();
 			break;
 		
 		case ID:
@@ -317,12 +334,14 @@ public class Compiler {
 	}
 
 	// Number ::= [’+’|’-’] Digit { Digit }
-	private void number() {
+	private Number number() {
 		if (token == Symbol.PLUS || token == Symbol.MINUS) {
 			this.nextToken();
 		}
 		
 		this.checkSymbol(Symbol.NUMBER);
+		
+		return this.number;
 	}
 
 	
@@ -570,12 +589,11 @@ public class Compiler {
 	}
 	
 	// verifica se o token corrente é aquele esperado (se for avança, caso contrário lança um erro)
-	private Symbol checkSymbol(Symbol esperado) {
+	private void checkSymbol(Symbol esperado) {
 		if (token == esperado)
 			this.nextToken();
 		else
 			error("'" + esperado + "' esperado.");
-		return esperado;
 	}
 	
 	private void error(String msg) {
@@ -587,4 +605,6 @@ public class Compiler {
 		
 		throw new RuntimeException(msg);
 	}
+	
+	
 }

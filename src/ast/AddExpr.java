@@ -28,5 +28,9 @@ public class AddExpr {
 			this.expr_dir.genC();
 		}
 	}
+
+	public void setDirExpr(MultExpr multExpr) {
+		this.expr_dir = multExpr;
+	}
 }
 
