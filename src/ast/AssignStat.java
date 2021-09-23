@@ -5,8 +5,8 @@ public class AssignStat extends Stat {
     private String id;
     private SimpleExpr expr; // 'expr' é uma subclasse de Expr
 
-    public AssignStat(Var v, SimpleExpr expr) {
-        this.id = v.getId();
+    public AssignStat(String id, SimpleExpr expr) {
+        this.id = id;
         this.expr = expr;
     }
 

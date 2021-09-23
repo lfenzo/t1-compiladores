@@ -18,6 +18,10 @@ public class IfStat extends Stat {
         this.expr = expr;
         this.statlist_if = statlist_if;
     }
+    
+    public void setStatlistElse(StatList statlist_else) {
+    	this.statlist_else = statlist_else;
+    }
 
     @Override
     public void genC() {

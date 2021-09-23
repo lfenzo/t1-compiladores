@@ -11,100 +11,131 @@ public class Compiler {
 	private char []input;
 	private String ident;
 	private int number;
+	private VarList vList;
 	
 	public Compiler() {
 		System.out.println("Voce instanciou um compilador");
 	}
 	
-	public void compile(char []p_input) {
+	public Program compile(char []p_input) {
         input = p_input;
         //input[input.length] '\0';
         tokenPos = 0;
+        this.vList = new VarList();
         nextToken();
-        program();
+        Program p = program();
         
         // token pos estará 1 posiç[ao apos o termino da string de entrada.
         if (tokenPos == (input.length + 1)) {
         	error("Fim de arquivo não esparado.");
         }
+        
+        return p;
     }
 	
 	// Program ::= VarList { Stat } 
-	private void program() {
+	private Program program() {
+		
+		StatList s = new StatList();
+		
 		varlist();
+		
 		while (token == Symbol.FOR
 				|| token == Symbol.WHILE
 				|| token == Symbol.IF
 				|| token == Symbol.ID // assignStat é iniciado por um identificador
 				|| token == Symbol.PRINT
 				|| token == Symbol.PRINT_LINE) {
-			stat();
+			s.addStat(stat());
 		}
+		
+		Program p = new Program(vList, s);
+		
+		return p;
 	}
 	
 	// VarList ::= { "var" Int Ident ";" }
 	private void varlist() {
+				
 		while (token == Symbol.VAR) {
-			var();
+			this.vList.addVar(var());
 		}
 	}
 	
 	// var ::= "var Int" ident ";"
-	private void var() {
+	private Var var() {
+		
+		String id;
+		
 		this.nextToken(); // come o token 'var'
 		
 		this.checkSymbol(Symbol.INT);
 		this.checkSymbol(Symbol.ID);
+		
+		id = this.ident;
+		Var v = new Var(id);
+		
 		this.checkSymbol(Symbol.SEMICOLON);
+		
+		return v;
 	}
 
 	// Stat ::= AssignStat | IfStat | ForStat | PrintStat | PrintlnStat | WhileStat
-	private void stat() {
+	private Stat stat() {
 		switch (token) {
 		
-		case ID: assignStat(); break; // assignStat é iniciado por um identificador
+		case ID: return assignStat(); break; // assignStat é iniciado por um identificador
 			
-		case IF: ifStat(); break;
+		case IF: return ifStat(); break;
 			
-		case FOR: forStat(); break;
+		case FOR: return forStat(); break;
 		
-		case WHILE: whileStat(); break;
+		case WHILE: return whileStat(); break;
 				
-		case PRINT: printStat(); break;
+		case PRINT: return printStat(); break;
 			
-		case PRINT_LINE: printlnStat(); break;
+		case PRINT_LINE: return printlnStat(); break;
 		
 		default:
 			error("Erro interno do compilador...");
+			return null;
 		}
 	}
 	
 	// WhileStat ::= "while" Expr StatList
-	private void whileStat() {
+	private WhileStat whileStat() {
 		this.nextToken(); // come o token "while"
+				
+		Expr e = expr();
+		StatList s = statList();
 		
-		expr();
-		statList();
+		WhileStat w = new WhileStat(e, s);
 	}
 
 	// IfStat ::= "if" Expr StatList [ "else" StatList ]
-	private void ifStat() {
+	private IfStat ifStat() {
 		this.nextToken(); // come o token "if"
 		
-		expr();
-		statList();
+		Expr e = expr();
+		StatList s = statList();
+		
+		IfStat i = new IfStat(e, s);
 		
 		if (token == Symbol.ELSE) {
 			this.nextToken(); // come o token "else"
-			expr();
-			statList();
-		}	
+//			expr();
+			i.setStatlistElse(statList());
+		}
+		
+		return i;
 	}
 
 	// StatList ::= "{" { Stat } "}"
-	private void statList() {
+	private StatList statList() {
 				
 		this.checkSymbol(Symbol.OPEN_CBRACES);
+		
+		StatList s = new StatList();
 		
 		while (token == Symbol.FOR
 				|| token == Symbol.WHILE
@@ -112,42 +143,60 @@ public class Compiler {
 				|| token == Symbol.ID // assignStat começa com um identificador
 				|| token == Symbol.PRINT
 				|| token == Symbol.PRINT_LINE) {
-			stat();
+			s.addStat(stat());
 		}
 		
 		this.checkSymbol(Symbol.CLOSE_CBRACES);
+		
+		return s;
 	}
 
 	// PrintStat ::= "print" Expr ";"
-	private void printStat() {
+	private PrintStat printStat() {
 		
 		this.nextToken(); // come o token "print"
-		expr();
+		Expr e = expr();
 		this.checkSymbol(Symbol.SEMICOLON);
+		
+		PrintStat prStat = new PrintStat(e, false);
+		
+		return prStat;
 	}
 	
 	// PrintStat ::= "println" Expr ";"
-	private void printlnStat() {
+	private PrintStat printlnStat() {
 		
 		this.nextToken(); // come o token "println"		
-		expr();
+		Expr e = expr();
 		this.checkSymbol(Symbol.SEMICOLON);
+		
+		PrintStat prlStat = new PrintStat(e, true);
+		
+		return prlStat;
 	}
 
 	// "for" Id "in" Expr ".." Expr StatList
-	private void forStat() {
+	private ForStat forStat() {
+		
+		String id;
 		
 		this.nextToken(); // come o token 'for'
-		
 		this.checkSymbol(Symbol.ID);
+		
+		id = this.ident;
+		
 		this.checkSymbol(Symbol.IN);
 		
-		expr();
+		Expr begin_expr = expr();
 		
 		this.checkSymbol(Symbol.TWO_DOTS);
 		
-		expr();
-		statList();	
+		Expr end_expr = expr();
+		StatList s = statList();
+		
+		ForStat for_stat = new ForStat(id, begin_expr, end_expr, s);
+		
+		return for_stat;
 	}
 
 	// AssignStat ::= Ident "=" Expr ";"
@@ -156,65 +205,75 @@ public class Compiler {
 		this.nextToken(); // come o token "identificador"
 		
 		this.checkSymbol(Symbol.ASSIGN);
-		expr();
+		Expr e = expr();
 		this.checkSymbol(Symbol.SEMICOLON);
+		
+		AssignStat a = new AssignStat(ident, e);
+		
+		return a;
 	}
 
 	//  Expr ::= AndExpr [ "||" AndExpr ]
-	private void expr() {
+	private Expr expr() {
 		
-		andExpr();
+		Expr e = new Expr (andExpr());
 		
 		if (token == Symbol.OR) {
 			this.nextToken(); // come o "||"
-			andExpr();
+			e.setExprDir(andExpr()); 
 		}
+		
+		return e;
 	}
 	
 	// AndExpr ::= RelExpr [ "&&" RelExpr ]
-	private void andExpr() {
+	private AndExpr andExpr() {
 		
-		relExpr();
+		AndExpr a = new AndExpr(relExpr());
 		
 		if (token == Symbol.AND) {
 			this.nextToken(); // come o '&&'
-			relExpr();
+			a.setExprDir(relExpr());
 		}
+		
+		return a;
 	}
 
 	// RelExpr ::= AddExpr [ RelOp AddExpr ]
-	private void relExpr() {
+	private RelExpr relExpr() {
 		
-		addExpr();
+		RelExpr r = new RelExpr(addExpr());
 				
 		if (token == Symbol.LT || token == Symbol.LE ||
 			token == Symbol.GT || token == Symbol.GE ||
 			token == Symbol.EQ || token == Symbol.NEQ) {
 			
 			this.nextToken(); // come o token do operador
-			addExpr();
+			r.setDirExpr(addExpr());
 		}
+		
+		return r;
 	}
 	
 	//	AddExpr ::= MultExpr { AddOp MultExpr }
-	private void addExpr() {
+	private AddExpr addExpr() {
 		
-		multExpr();
+		AddExpr a = new AddExpr(multExpr());
 		
 		while (token == Symbol.PLUS || token == Symbol.MINUS) {
 			this.nextToken(); // come o operador (+ ou -)
-			multExpr();
+			a.setDirExpr(multExpr());
 		}
 	}
 
 	// MultExpr ::= SimpleExpr { MultOp SimpleExpr }
-	private void multExpr() {	
+	private MultExpr multExpr() {	
 		
-		simpleExpr();
+		MultExpr m = new MultExpr(simpleExpr());
 		
 		while (token == Symbol.MULT || token == Symbol.DIV || token == Symbol.PERC) {
 			this.nextToken(); // come o operador (+ ou -)
-			simpleExpr();
+			m.setExprDir(simpleExpr());
 		}
 	}
 
@@ -511,11 +570,12 @@ public class Compiler {
 	}
 	
 	// verifica se o token corrente é aquele esperado (se for avança, caso contrário lança um erro)
-	private void checkSymbol(Symbol esperado) {
+	private Symbol checkSymbol(Symbol esperado) {
 		if (token == esperado)
 			this.nextToken();
 		else
 			error("'" + esperado + "' esperado.");
+		return esperado;
 	}
 	
 	private void error(String msg) {

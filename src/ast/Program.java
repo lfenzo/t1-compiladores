@@ -3,9 +3,9 @@ package ast;
 public class Program {
 
     private VarList varlist;
-    private Stat statements;
+    private StatList statements;
 
-    public Program(VarList varlist, Stat statements) {
+    public Program(VarList varlist, StatList statements) {
         this.varlist = varlist;
         this.statements = statements;
     }

@@ -13,7 +13,11 @@ public class Expr {
 	public Expr(AndExpr expr) {
 		this.expr_esq = expr;
 	}
-
+	
+	public void setExprDir(AndExpr expr_dir) {
+		this.expr_dir = expr_dir;
+	}
+	
 	public void genC() {
 		this.expr_esq.genC();
 		
