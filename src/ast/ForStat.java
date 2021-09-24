@@ -18,7 +18,7 @@ public class ForStat extends Stat {
     public void genC() {
         System.out.printf("for(int %s = ", this.iter.getId());
         this.begin.genC();
-        System.out.printf("; %s < ", this.iter.getId());
+        System.out.printf("; %s <= ", this.iter.getId());
         this.end.genC();
         System.out.printf("; %s++) {\n", this.iter.getId());
         
