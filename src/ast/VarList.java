@@ -10,14 +10,20 @@ public class VarList {
         if (!varExists(newvar)) {
             this.variaveis.add(newvar);
         }
+       
         // TODO erro
     }
 
     public boolean varExists(Var newvar) {
         for (Var v : this.variaveis) {
-            if (newvar.getId() == v.getId()) {
-                return true;
-            }
+        	
+        	String new_id = newvar.getId();
+        	String var_id = v.getId();
+        	        	
+        	// se for igual a 0 significa que as atrings são iguais
+        	if (var_id.compareTo(new_id) == 0) {
+        		return true;
+        	}
         }
         return false;
     }
