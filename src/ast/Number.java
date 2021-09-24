@@ -8,12 +8,16 @@ public class Number extends SimpleExpr {
         this.value = value;
     }
 
+
     public int getValue() {
         return this.value;
     }
-
+    
+    public void setValue(int value) {
+    	this.value = value;
+    }
     @Override
     public void genC() {
-        System.out.println(this.value);
+        System.out.printf("%d", this.value);
     }
 } 

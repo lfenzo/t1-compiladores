@@ -16,10 +16,14 @@ public class ForStat extends Stat {
 
     @Override
     public void genC() {
-        // TODO Decidir se ter as funções retornando strings 
-        // ao inves de printando não seria melhor. Isso permite que os assignments montassem
-        // as proprios prints de forma mais facil
-        System.out.printf("\tfor(int %s; %s < )", this.iter, this.iter);
+        System.out.printf("\tfor(int %s = ", this.iter.getId());
+        this.begin.genC();
+        System.out.printf("; %s < ", this.iter.getId());
+        this.end.genC();
+        System.out.printf("; %s++) {\n", this.iter.getId());
+        
         this.statlist.genC();
+        
+        System.out.println("\t}");
     }
 }

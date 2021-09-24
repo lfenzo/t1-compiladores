@@ -18,6 +18,10 @@ public class RelExpr {
 		this.expr_esq = expr;
 	}
 
+	public void setOperator(String op) {
+		this.operador = new RelOp(op);
+	}
+	
 	public void genC() {
 		this.expr_esq.genC();
 		

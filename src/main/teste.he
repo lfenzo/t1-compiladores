@@ -1,28 +1,8 @@
 var Int i;
-var Int soma;
-var Int somaFor;
-var Int n;
-var Int verd;
-
-n = 100;
-soma = 0;
+var Int i2;
+var Int i3;
+var Int i4;
 i = 0;
-verd = 2;
-
-while i < n && !!verd { 
-  if i%2 == (0+0*0/1) {
-	soma = (--soma) + i*i;
-  }
-  i = i + 1;
-}
-
-somaFor = 0;
-
-for k in 0..100 {
-  if i%2 == 0 {
-	somaFor = somaFor + k*k;
-  }
-}
-
-println soma;
-println somaFor;
+i2 = 52;
+i3 = 43;
+i4 = 14;

@@ -1,16 +1,18 @@
 package main;
 
 import ast.*;
+import ast.Number;
 import lexer.Symbol;
 
 public class Compiler {
 	
 	private Symbol token;
 	private int tokenPos;
-	private int lineNumber;
+//	private int lineNumber;
 	private char []input;
 	private String ident;
-	private int number;
+	private Number number = new Number(0);
+	private int localValue;
 	private VarList vList;
 	
 	public Compiler() {
@@ -29,6 +31,8 @@ public class Compiler {
         if (tokenPos == (input.length + 1)) {
         	error("Fim de arquivo nÃ£o esparado.");
         }
+        
+        p.genC();
         
         return p;
     }
@@ -80,13 +84,14 @@ public class Compiler {
 		return v;
 	}
 	
-	private Var getVar(String id) {
+	private Var getVar(String id, boolean is_for) {
 		for(int i = 0; i < this.vList.getSize(); i++) {
 			if(this.vList.getElement(i).getId() == id) {
 				return this.vList.getElement(i);
 			}
 		}
-		error("Variável não declarada");
+		if(!is_for)
+			error("Variável não declarada");
 		return null;
 	}
 	
@@ -94,17 +99,17 @@ public class Compiler {
 	private Stat stat() {
 		switch (token) {
 		
-		case ID: return assignStat(); break; // assignStat Ã© iniciado por um identificador
+		case ID: return assignStat(); // assignStat Ã© iniciado por um identificador
 			
-		case IF: return ifStat(); break;
+		case IF: return ifStat(); 
 			
-		case FOR: return forStat(); break;
+		case FOR: return forStat();
 		
-		case WHILE: return whileStat(); break;
+		case WHILE: return whileStat();
 				
-		case PRINT: return printStat(); break;
+		case PRINT: return printStat();
 			
-		case PRINT_LINE: return printlnStat(); break;
+		case PRINT_LINE: return printlnStat(); 
 		
 		default:
 			error("Erro interno do compilador...");
@@ -205,7 +210,10 @@ public class Compiler {
 		
 		Expr end_expr = expr();
 		StatList s = statList();
-		Var v = this.getVar(id);
+		Var v = this.getVar(id, true);
+		
+		if(v != null)
+			error("Variável do for não pode ter sido declarada antes");
 		
 		ForStat for_stat = new ForStat(v, begin_expr, end_expr, s);
 		
@@ -246,6 +254,7 @@ public class Compiler {
 		
 		if (token == Symbol.AND) {
 			this.nextToken(); // come o '&&'
+			a.setOperator("&&");
 			a.setExprDir(relExpr());
 		}
 		
@@ -256,11 +265,26 @@ public class Compiler {
 	private RelExpr relExpr() {
 		
 		RelExpr r = new RelExpr(addExpr());
-				
+		String op = "==";
+		
 		if (token == Symbol.LT || token == Symbol.LE ||
 			token == Symbol.GT || token == Symbol.GE ||
 			token == Symbol.EQ || token == Symbol.NEQ) {
 			
+			if(token == Symbol.LT)
+				op = "<";
+			else if(token == Symbol.LE)
+				op = "<=";
+			else if(token == Symbol.GT)
+				op = ">";
+			else if(token == Symbol.GE)
+				op = ">=";
+			else if(token == Symbol.EQ)
+				op = "==";
+			else if(token == Symbol.LE)
+				op = "!=";
+			
+			r.setOperator(op);
 			this.nextToken(); // come o token do operador
 			r.setDirExpr(addExpr());
 		}
@@ -272,8 +296,14 @@ public class Compiler {
 	private AddExpr addExpr() {
 		
 		AddExpr a = new AddExpr(multExpr());
+		char op = '+';
 		
 		while (token == Symbol.PLUS || token == Symbol.MINUS) {
+			if(token == Symbol.PLUS)
+				op = '+';
+			else if(token == Symbol.MINUS)
+				op = '-';
+			a.setOperator(op);
 			this.nextToken(); // come o operador (+ ou -)
 			a.setDirExpr(multExpr());
 		}
@@ -285,8 +315,17 @@ public class Compiler {
 	private MultExpr multExpr() {	
 		
 		MultExpr m = new MultExpr(simpleExpr());
+		char op = '*';
 		
 		while (token == Symbol.MULT || token == Symbol.DIV || token == Symbol.PERC) {
+			if(token == Symbol.MULT)
+				op = '*';
+			else if(token == Symbol.DIV)
+				op = '/';
+			else if(token == Symbol.PERC)
+				op = '%';
+			
+			m.setOperator(op);
 			this.nextToken(); // come o operador (+ ou -)
 			m.setExprDir(simpleExpr());
 		}
@@ -301,53 +340,55 @@ public class Compiler {
 		
 		case NUMBER:
 			return number();
-			break;
 		
 		case OPEN_PAR:
 			this.nextToken(); // come o (
-			return expr();
+			Expr e = expr();
 			this.checkSymbol(Symbol.CLOSE_PAR);
-			break;
+			return e;
 			
 		case NOT:
 			this.nextToken(); // come o "!"
 			return simpleExpr();
-			break;
 			
 		case PLUS:
 			this.nextToken(); // come o operador +
 			return simpleExpr();
-			break;
 			
 		case MINUS:
 			this.nextToken(); // come o operador -
 			return simpleExpr();
-			break;
 		
 		case ID:
-			String var_name = this.ident;
+			Var var_name = new Var (this.ident);
 			this.nextToken(); // come o token do identificado
-			
+			return var_name;
 		default:
 			break;
 		}
+		
+		error("Simple Expr inválido!");
+		return null;
 	}
 
 	// Number ::= [â€™+â€™|â€™-â€™] Digit { Digit }
 	private Number number() {
 		if (token == Symbol.PLUS || token == Symbol.MINUS) {
+//			this.localValue *= -1;
 			this.nextToken();
 		}
 		
 		this.checkSymbol(Symbol.NUMBER);
 		
-		return this.number;
+		Number n = new Number(this.localValue);
+		
+		return n;
 	}
 
 	
 	public void nextToken() {
 		while (tokenPos < input.length &&
-				(input[tokenPos] == ' ' || input[tokenPos] == '\n' || input[tokenPos] == '\t') ) {
+				(input[tokenPos] == ' ' || input[tokenPos] == '\n' || input[tokenPos] == '\t' || input[tokenPos] == '\r') ) {
 			tokenPos++;
 		}
 		
@@ -467,11 +508,14 @@ public class Compiler {
 			// recolhe os nÃºmeros
 			} else if (Character.isDigit(ch)) {
 				
-				this.number = ch - '0';
+				this.localValue = ch - '0';
+				
+//				this.number.setValue(ch - '0');
 				tokenPos++;
 				
 				while ( tokenPos < input.length && Character.isDigit(ch = input[tokenPos]) ) {
-					number = number * 10 + (ch - '0');
+//					this.number.setValue(this.number.getValue() * 10 + (ch - '0'));
+					this.localValue = this.localValue * 10 + (ch - '0');
 					tokenPos++;
 				}
 				
@@ -603,8 +647,7 @@ public class Compiler {
 			if (tokenPos >= input.length)
 				tokenPos = input.length;
 		
+		System.out.println(this.tokenPos);
 		throw new RuntimeException(msg);
 	}
-	
-	
 }

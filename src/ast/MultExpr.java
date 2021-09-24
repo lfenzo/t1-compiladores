@@ -5,32 +5,46 @@ import java.util.ArrayList;
 public class MultExpr {
 
     private SimpleExpr simple_expr = null;
-    private MultOp mult_operador = null;
-    private ArrayList<SimpleExpr> expr_dir = new ArrayList<SimplexExpr>;
+    private ArrayList<MultOp> mult_operador = null;
+    private ArrayList<SimpleExpr> expr_dir = null;
     
-    public MultExpr(MultOp op, SimpleExpr expr) {
-        this.simple_expr = expr;
-        this.mult_operador = op;
+    public MultExpr(SimpleExpr expr_esq, MultOp op, SimpleExpr expr_dir) {
+        this.simple_expr = expr_esq;
+        if(this.expr_dir == null) {
+        	this.expr_dir = new ArrayList<>();
+        	this.mult_operador = new ArrayList<>();
+        }
+        this.mult_operador.add(op);
+        this.expr_dir.add(expr_dir);
     }
 
     public MultExpr(SimpleExpr expr) {
         this.simple_expr = expr;
     }
     
+    public void setOperator(char op) {
+    	MultOp m = new MultOp(op);
+    	
+    	if(this.mult_operador == null)
+    		this.mult_operador = new ArrayList<>();
+    	
+    	this.mult_operador.add(m);
+    }
+    
     public void setExprDir(SimpleExpr expr_dir) {
-		this.expr_dir.add(expr_dir);
+		if(this.expr_dir == null)
+			this.expr_dir = new ArrayList<>();
+    	this.expr_dir.add(expr_dir);
 	}
     
     public void genC() {
-//        if (this.mult_operador == null) {
-//            System.out.println(this.mult_operador.getValue());
-//            System.out.println(this.simple_expr.getValue());
-//        } else {
-//            System.out.println();
-//        }
+        if (this.mult_operador == null) {
+            this.simple_expr.genC();
+        } else {
+            for(int i = 0; i < this.expr_dir.size(); i++) {
+            	
+            	this.expr_dir.get(i).genC();
+            }
+        }
     }
-
-//    public Number getValue() {
-//
-//    }
 }
