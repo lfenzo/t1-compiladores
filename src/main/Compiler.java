@@ -215,6 +215,7 @@ public class Compiler {
 		if(v != null)
 			error("Variável do for não pode ter sido declarada antes");
 		
+		v = new Var(id);
 		ForStat for_stat = new ForStat(v, begin_expr, end_expr, s);
 		
 		return for_stat;

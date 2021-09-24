@@ -1,8 +1,8 @@
+var Int s;
 var Int i;
-var Int i2;
-var Int i3;
-var Int i4;
-i = 0;
-i2 = 52;
-i3 = 43;
-i4 = 14;
+s = 0;
+for j in 1..100 {
+s = s + j;
+}
+println s;
+

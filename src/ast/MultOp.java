@@ -18,6 +18,6 @@ public class MultOp {
     }
 
     public void genC() {
-        System.out.println(this.operador);
+        System.out.print(this.operador);
     }
 } 

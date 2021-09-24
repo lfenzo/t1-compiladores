@@ -25,15 +25,16 @@ public class IfStat extends Stat {
 
     @Override
     public void genC() {
-        System.out.printf("\tif (");
+        System.out.printf("if (");
         this.expr.genC();
-        System.out.printf(")");
+        System.out.printf(") {\n");
 
         this.statlist_if.genC();
-
+        System.out.println("}");
         if (this.statlist_else != null) {
-            System.out.printf(" else ");
+            System.out.printf(" else {\n");
             this.statlist_else.genC();
+            System.out.println("\n");
         }
     }
 }

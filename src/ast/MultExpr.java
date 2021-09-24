@@ -38,11 +38,14 @@ public class MultExpr {
 	}
     
     public void genC() {
-        if (this.mult_operador == null) {
-            this.simple_expr.genC();
-        } else {
+        
+        this.simple_expr.genC();
+
+        if (this.mult_operador != null) {
             for(int i = 0; i < this.expr_dir.size(); i++) {
-            	
+            	System.out.print(" ");
+            	this.mult_operador.get(i).genC();
+            	System.out.print(" ");
             	this.expr_dir.get(i).genC();
             }
         }

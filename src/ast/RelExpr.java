@@ -26,7 +26,9 @@ public class RelExpr {
 		this.expr_esq.genC();
 		
 		if (this.expr_dir != null) {
+			System.out.print(" ");
 			this.operador.genC();
+			System.out.print(" ");
 			this.expr_dir.genC();
 		}
 	}

@@ -31,7 +31,9 @@ public class AddExpr {
 		
 		if (this.expr_dir != null) {
 			for(int i = 0; i < this.operators.size(); i++) {
+				System.out.print(" ");
 				this.operators.get(i).genC();
+				System.out.print(" ");
 				this.expr_dir.get(i).genC();
 			}
 		}

@@ -32,7 +32,7 @@ public class VarList {
 
     public void genC() {
         for (Var v : this.variaveis) {
-            System.out.printf("\tint %s;\n", v.getId());
+            System.out.printf("int %s;\n", v.getId());
         }
     }
 }

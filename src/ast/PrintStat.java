@@ -14,13 +14,14 @@ public class PrintStat extends Stat {
     @Override
     public void genC() {
 
-        System.out.println("printf(\"");
+        if(this.is_print_line)
+        	System.out.print("printf(\"%d\\n\", ");
+        else
+        	System.out.print("printf(\"%d\", ");
+        
         this.expr.genC();
 
-        if (this.is_print_line) {
-            System.out.println("\n\");");
-        } else {
-            System.out.println("\");"); }
+        System.out.println(");");
     }
 
 }

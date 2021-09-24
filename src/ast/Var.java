@@ -4,9 +4,11 @@ public class Var extends SimpleExpr {
 
     private String id;
     private int value;
+    private boolean isDeclared;
     
     public Var(String id) {
         this.id = id;
+        isDeclared = false;
     }
 
     public String getId() {
@@ -23,6 +25,11 @@ public class Var extends SimpleExpr {
     
     @Override
     public void genC() {
-        System.out.printf("\tint %s;\n", this.id);
+    	if(!this.isDeclared) {
+    		System.out.printf("%s", this.id);
+    		this.isDeclared = true;
+    	}
+    	else
+    		System.out.printf("%s", this.id);
     }
 }

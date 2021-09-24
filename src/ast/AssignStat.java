@@ -12,7 +12,7 @@ public class AssignStat extends Stat {
 
     @Override
     public void genC() {
-        System.out.printf("\t%s = ", this.id);
+        System.out.printf("%s = ", this.id);
         this.expr.genC();
         System.out.printf(";\n");
     }

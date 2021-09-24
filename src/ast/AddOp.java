@@ -17,6 +17,6 @@ public class AddOp {
     }
 
     public void genC() {
-        System.out.println(this.operador);
+        System.out.printf("%c", this.operador);
     }
 } 

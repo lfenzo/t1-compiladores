@@ -27,7 +27,9 @@ public class AndExpr {
 		this.expr_esq.genC();
 		
 		if (this.expr_dir != null) {
+			System.out.print(" ");
 			System.out.printf("&&");
+			System.out.print(" ");
 			this.expr_dir.genC();
 		}
 	}

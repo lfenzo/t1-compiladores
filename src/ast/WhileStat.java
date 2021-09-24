@@ -17,10 +17,11 @@ public class WhileStat extends Stat {
         //   stat1
         //   stat2
         // }
-        System.out.printf("\twhile (");
+        System.out.printf("while ( ");
         this.expr.genC();
-        System.out.printf(") ");
+        System.out.printf(") {\n");
 
         this.statlist.genC();
+        System.out.println("}");
     }
 }

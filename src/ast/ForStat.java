@@ -10,13 +10,13 @@ public class ForStat extends Stat {
     public ForStat(Var iter, Expr begin_expr, Expr end_expr, StatList statList) {
         this.iter = iter;
         this.begin = begin_expr;
-        this.end = begin_expr;
+        this.end = end_expr;
         this.statlist = statList;
     }
 
     @Override
     public void genC() {
-        System.out.printf("\tfor(int %s = ", this.iter.getId());
+        System.out.printf("for(int %s = ", this.iter.getId());
         this.begin.genC();
         System.out.printf("; %s < ", this.iter.getId());
         this.end.genC();
@@ -24,6 +24,6 @@ public class ForStat extends Stat {
         
         this.statlist.genC();
         
-        System.out.println("\t}");
+        System.out.println("}");
     }
 }
