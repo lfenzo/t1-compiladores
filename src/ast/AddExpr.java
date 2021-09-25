@@ -26,17 +26,18 @@ public class AddExpr {
 		this.operators.add(new_op);
 	}
 
-	public void genC() {
-		this.expr_esq.genC();
+	public int genC(int ident) {
+		ident = this.expr_esq.genC(ident);
 		
 		if (this.expr_dir != null) {
 			for(int i = 0; i < this.operators.size(); i++) {
 				System.out.print(" ");
-				this.operators.get(i).genC();
+				ident = this.operators.get(i).genC(ident);
 				System.out.print(" ");
-				this.expr_dir.get(i).genC();
+				ident = this.expr_dir.get(i).genC(ident);
 			}
 		}
+		return ident;
 	}
 
 	public void setDirExpr(MultExpr multExpr) {

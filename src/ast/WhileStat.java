@@ -11,17 +11,33 @@ public class WhileStat extends Stat {
     }
 
     @Override
-    public void genC() {
+    public int genC(int ident) {
 
         // while expr {
         //   stat1
         //   stat2
         // }
+    	for(int i = 0; i < ident; i++)
+        	System.out.print("\t");
         System.out.printf("while ( ");
-        this.expr.genC();
+        ident = this.expr.genC(ident);
         System.out.printf(") {\n");
-
-        this.statlist.genC();
+        ident++;
+        ident = this.statlist.genC(ident);
+        ident--;
+        for(int i = 0; i < ident; i++)
+        	System.out.print("\t");
         System.out.println("}");
+        return ident;
+    }
+    
+    public void eval() {
+    	int val = this.expr.eval();
+    	
+    	while(val) {
+    		this.statlist.eval();
+    		
+    		val = this.expr.eval();
+    	}
     }
 }

@@ -1,5 +1,5 @@
 package ast;
 
 abstract public class Stat {
-    abstract public void genC();
+    abstract public int genC(int ident);
 }

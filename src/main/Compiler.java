@@ -224,6 +224,14 @@ public class Compiler {
 	// AssignStat ::= Ident "=" Expr ";"
 	private AssignStat assignStat() {
 		String ident = this.ident;
+		
+		Var assign_var = new Var(ident);
+
+		// verifica se a variável à esquerda do '=' já foi declarada
+		if ( !vList.varExists(assign_var) ) {
+			error("Variável '" + ident + "' não declarada.");
+		}
+		
 		this.nextToken(); // come o token "identificador"
 		
 		this.checkSymbol(Symbol.ASSIGN);

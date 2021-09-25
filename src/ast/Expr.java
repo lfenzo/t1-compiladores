@@ -20,12 +20,13 @@ public class Expr extends SimpleExpr{
 		this.expr_dir = expr_dir;
 	}
 	
-	public void genC() {
-		this.expr_esq.genC();
+	public int genC(int ident) {
+		ident = this.expr_esq.genC(ident);
 		
 		if (this.expr_dir != null) {
 			System.out.printf("||");
-			this.expr_dir.genC();
+			ident = this.expr_dir.genC(ident);
 		}
+		return ident;
 	}
 }

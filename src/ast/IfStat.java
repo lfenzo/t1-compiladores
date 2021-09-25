@@ -24,17 +24,40 @@ public class IfStat extends Stat {
     }
 
     @Override
-    public void genC() {
+    public int genC(int ident) {
+    	for(int i = 0; i < ident; i++)
+        	System.out.print("\t");
         System.out.printf("if (");
-        this.expr.genC();
+        ident = this.expr.genC(ident);
         System.out.printf(") {\n");
-
-        this.statlist_if.genC();
+        ident++;
+        ident = this.statlist_if.genC(ident);
+        ident--;
+        for(int i = 0; i < ident; i++)
+        	System.out.print("\t");
         System.out.println("}");
         if (this.statlist_else != null) {
-            System.out.printf(" else {\n");
-            this.statlist_else.genC();
+        	for(int i = 0; i < ident; i++)
+            	System.out.print("\t");
+        	System.out.printf(" else {\n");
+        	ident++;
+            ident = this.statlist_else.genC(ident);
+            ident--;
+            for(int i = 0; i < ident; i++)
+            	System.out.print("\t");
             System.out.println("\n");
         }
+        return ident;
+    }
+    
+    public void eval() {
+    	int val = this.expr.eval();
+    	
+    	if(val != 0) {
+    		statlist_if.eval();
+    	} else {
+    		if(statlist_else != null)
+    			statlist_else.eval();
+    	} 		
     }
 }

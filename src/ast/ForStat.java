@@ -15,15 +15,29 @@ public class ForStat extends Stat {
     }
 
     @Override
-    public void genC() {
+    public int genC(int ident) {
+    	for(int i = 0; i < ident; i++)
+        	System.out.print("\t");
         System.out.printf("for(int %s = ", this.iter.getId());
-        this.begin.genC();
-        System.out.printf("; %s < ", this.iter.getId());
-        this.end.genC();
+        ident = this.begin.genC(ident);
+        System.out.printf("; %s <= ", this.iter.getId());
+        ident = this.end.genC(ident);
         System.out.printf("; %s++) {\n", this.iter.getId());
-        
-        this.statlist.genC();
-        
+        ident++;
+        ident = this.statlist.genC(ident);
+        ident--;
+        for(int i = 0; i < ident; i++)
+        	System.out.print("\t");
         System.out.println("}");
+        return ident;
+    }
+    
+    public void eval() {
+    	int beg = this.begin.eval();
+    	int end = this.end.eval();
+    	
+    	for(; beg < end; beg++) {
+    		this.statlist.eval();
+    	}
     }
 }

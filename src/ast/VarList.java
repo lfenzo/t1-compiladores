@@ -15,9 +15,13 @@ public class VarList {
 
     public boolean varExists(Var newvar) {
         for (Var v : this.variaveis) {
-            if (newvar.getId() == v.getId()) {
-                return true;
-            }
+        	String new_id = newvar.getId();
+        	String var_id = v.getId();
+
+        	// se for igual a 0 significa que as atrings são iguais
+        	if (var_id.compareTo(new_id) == 0) {
+        		return true;
+        	}
         }
         return false;
     }
@@ -30,9 +34,12 @@ public class VarList {
     	return this.variaveis.get(position);
     }
 
-    public void genC() {
+    public int genC(int ident) {
         for (Var v : this.variaveis) {
-            System.out.printf("int %s;\n", v.getId());
+            for(int i = 0; i < ident; i++)
+            	System.out.print("\t");
+        	System.out.printf("int %s;\n", v.getId());
         }
+        return ident;
     }
 }

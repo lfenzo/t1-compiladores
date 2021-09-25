@@ -24,12 +24,13 @@ public class Var extends SimpleExpr {
     }
     
     @Override
-    public void genC() {
+    public int genC(int ident) {
     	if(!this.isDeclared) {
     		System.out.printf("%s", this.id);
     		this.isDeclared = true;
     	}
     	else
     		System.out.printf("%s", this.id);
+    	return ident;
     }
 }

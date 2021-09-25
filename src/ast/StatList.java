@@ -10,9 +10,16 @@ public class StatList {
         this.statements.add(newstat);
     }
 
-    public void genC() {
+    public int genC(int ident) {
         for (Stat s : this.statements) {
-            s.genC(); // cada um dos statements deve gerar a sua propria saida;
+            ident = s.genC(ident); // cada um dos statements deve gerar a sua propria saida;
         }
+        return ident;
+    }
+    
+    public void eval() {
+    	for (Stat s : this.statements) {
+    		s.eval();
+    	}
     }
 }

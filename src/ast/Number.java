@@ -17,7 +17,8 @@ public class Number extends SimpleExpr {
     	this.value = value;
     }
     @Override
-    public void genC() {
+    public int genC(int ident) {
         System.out.printf("%d", this.value);
+        return ident;
     }
 } 

@@ -22,15 +22,18 @@ public class RelExpr {
 		this.operador = new RelOp(op);
 	}
 	
-	public void genC() {
-		this.expr_esq.genC();
+	public int genC(int ident) {
+		
+		ident = this.expr_esq.genC(ident);
 		
 		if (this.expr_dir != null) {
 			System.out.print(" ");
-			this.operador.genC();
+			ident = this.operador.genC(ident);
 			System.out.print(" ");
-			this.expr_dir.genC();
+			ident = this.expr_dir.genC(ident);
 		}
+		
+		return ident;
 	}
 
 	public void setDirExpr(AddExpr addExpr) {

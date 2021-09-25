@@ -37,17 +37,18 @@ public class MultExpr {
     	this.expr_dir.add(expr_dir);
 	}
     
-    public void genC() {
+    public int genC(int ident) {
         
-        this.simple_expr.genC();
+        ident = this.simple_expr.genC(ident);
 
         if (this.mult_operador != null) {
             for(int i = 0; i < this.expr_dir.size(); i++) {
             	System.out.print(" ");
-            	this.mult_operador.get(i).genC();
+            	ident = this.mult_operador.get(i).genC(ident);
             	System.out.print(" ");
-            	this.expr_dir.get(i).genC();
+            	ident = this.expr_dir.get(i).genC(ident);
             }
         }
+        return ident;
     }
 }

@@ -20,7 +20,8 @@ public class RelOp {
         return this.operador;
     }
 
-    public void genC() {
+    public int genC(int ident) {
         System.out.print(this.operador);
+        return ident;
     }
 } 

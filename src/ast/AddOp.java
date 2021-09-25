@@ -16,7 +16,8 @@ public class AddOp {
         return this.operador;
     }
 
-    public void genC() {
+    public int genC(int ident) {
         System.out.printf("%c", this.operador);
+        return ident;
     }
 } 

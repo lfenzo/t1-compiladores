@@ -1,5 +1,5 @@
 package ast;
 
 abstract public class SimpleExpr {
-    abstract public void genC();
+    abstract int genC(int ident);
 }
