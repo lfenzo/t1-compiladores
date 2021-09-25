@@ -91,7 +91,7 @@ public class Compiler {
 			}
 		}
 		if(!is_for)
-			error("Variável não declarada");
+			error("Variï¿½vel nï¿½o declarada");
 		return null;
 	}
 	
@@ -213,7 +213,7 @@ public class Compiler {
 		Var v = this.getVar(id, true);
 		
 		if(v != null)
-			error("Variável do for não pode ter sido declarada antes");
+			error("Variï¿½vel do for nï¿½o pode ter sido declarada antes");
 		
 		v = new Var(id);
 		ForStat for_stat = new ForStat(v, begin_expr, end_expr, s);
@@ -223,13 +223,14 @@ public class Compiler {
 
 	// AssignStat ::= Ident "=" Expr ";"
 	private AssignStat assignStat() {
+		
 		String ident = this.ident;
 		
 		Var assign_var = new Var(ident);
 
-		// verifica se a variável à esquerda do '=' já foi declarada
+		// verifica se a variï¿½vel ï¿½ esquerda do '=' jï¿½ foi declarada
 		if ( !vList.varExists(assign_var) ) {
-			error("Variável '" + ident + "' não declarada.");
+			error("VariÃ¡vel '" + ident + "' nÃ£o declarada.");
 		}
 		
 		this.nextToken(); // come o token "identificador"
@@ -376,7 +377,7 @@ public class Compiler {
 			break;
 		}
 		
-		error("Simple Expr inválido!");
+		error("Simple Expr invï¿½lido!");
 		return null;
 	}
 

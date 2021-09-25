@@ -10,6 +10,7 @@ public class VarList {
         if (!varExists(newvar)) {
             this.variaveis.add(newvar);
         }
+       
         // TODO erro
     }
 
@@ -18,7 +19,7 @@ public class VarList {
         	String new_id = newvar.getId();
         	String var_id = v.getId();
 
-        	// se for igual a 0 significa que as atrings s„o iguais
+        	// se for igual a 0 significa que as atrings s√£o iguais
         	if (var_id.compareTo(new_id) == 0) {
         		return true;
         	}
