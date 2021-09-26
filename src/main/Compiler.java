@@ -8,7 +8,7 @@ public class Compiler {
 	
 	private Symbol token;
 	private int tokenPos;
-//	private int lineNumber;
+	private int lineNumber = 1;
 	private char []input;
 	private String ident;
 	private Number number = new Number(0);
@@ -33,6 +33,7 @@ public class Compiler {
         }
         
         p.genC();
+        p.run();
         
         return p;
     }
@@ -90,8 +91,9 @@ public class Compiler {
 				return this.vList.getElement(i);
 			}
 		}
+		
 		if(!is_for)
-			error("Variï¿½vel nï¿½o declarada");
+			error("Variável não declarada");
 		return null;
 	}
 	
@@ -213,7 +215,7 @@ public class Compiler {
 		Var v = this.getVar(id, true);
 		
 		if(v != null)
-			error("Variï¿½vel do for nï¿½o pode ter sido declarada antes");
+			error("Variável do for não pode ter sido declarada antes");
 		
 		v = new Var(id);
 		ForStat for_stat = new ForStat(v, begin_expr, end_expr, s);
@@ -223,14 +225,13 @@ public class Compiler {
 
 	// AssignStat ::= Ident "=" Expr ";"
 	private AssignStat assignStat() {
-		
 		String ident = this.ident;
 		
 		Var assign_var = new Var(ident);
 
-		// verifica se a variï¿½vel ï¿½ esquerda do '=' jï¿½ foi declarada
+		// verifica se a variável à esquerda do '=' já foi declarada
 		if ( !vList.varExists(assign_var) ) {
-			error("VariÃ¡vel '" + ident + "' nÃ£o declarada.");
+			error("Variável '" + ident + "' não declarada.");
 		}
 		
 		this.nextToken(); // come o token "identificador"
@@ -239,7 +240,9 @@ public class Compiler {
 		Expr e = expr();
 		this.checkSymbol(Symbol.SEMICOLON);
 		
-		AssignStat a = new AssignStat(ident, e);
+		AssignStat a = new AssignStat(assign_var, e);
+		
+		assign_var.equals(e.eval());
 		
 		return a;
 	}
@@ -377,7 +380,7 @@ public class Compiler {
 			break;
 		}
 		
-		error("Simple Expr invï¿½lido!");
+		error("Simple Expr inválido!");
 		return null;
 	}
 
@@ -399,6 +402,8 @@ public class Compiler {
 	public void nextToken() {
 		while (tokenPos < input.length &&
 				(input[tokenPos] == ' ' || input[tokenPos] == '\n' || input[tokenPos] == '\t' || input[tokenPos] == '\r') ) {
+			if(input[tokenPos] == '\n')
+				this.lineNumber++;
 			tokenPos++;
 		}
 		

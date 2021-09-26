@@ -34,7 +34,7 @@ public class WhileStat extends Stat {
     public void eval() {
     	int val = this.expr.eval();
     	
-    	while(val) {
+    	while(val != 0) {
     		this.statlist.eval();
     		
     		val = this.expr.eval();

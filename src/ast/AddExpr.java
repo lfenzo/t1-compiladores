@@ -45,5 +45,23 @@ public class AddExpr {
 			this.expr_dir = new ArrayList<>();
 		this.expr_dir.add(multExpr);
 	}
+	
+	public int eval() {
+		int value1 = this.expr_esq.eval();
+		int value2;
+		int finalValue = value1;
+		
+		if(this.expr_dir != null) {
+			for(int i = 0; i < this.operators.size(); i++) {
+				value2 = this.expr_dir.get(i).eval();
+				if(this.operators.get(i).getOperador() == '+')
+					finalValue += value2;
+				else
+					finalValue -= value2;
+			}
+		}
+		
+		return finalValue;
+	}
 }
 

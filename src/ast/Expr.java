@@ -29,4 +29,16 @@ public class Expr extends SimpleExpr{
 		}
 		return ident;
 	}
+	
+	public int eval() {
+		int value1 = this.expr_esq.eval();
+		int value2 = 0;
+		if(this.expr_dir != null) {
+			value2 = this.expr_dir.eval();
+			if(value1 != 0 || value2 != 0)
+				return 1;
+			return 0;
+		}
+		return value1;
+	}
 }

@@ -8,7 +8,6 @@ public class Number extends SimpleExpr {
         this.value = value;
     }
 
-
     public int getValue() {
         return this.value;
     }
@@ -20,5 +19,9 @@ public class Number extends SimpleExpr {
     public int genC(int ident) {
         System.out.printf("%d", this.value);
         return ident;
+    }
+    
+    public int eval() {
+    	return this.getValue();
     }
 } 

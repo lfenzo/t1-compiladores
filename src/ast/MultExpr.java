@@ -51,4 +51,24 @@ public class MultExpr {
         }
         return ident;
     }
+    
+    public int eval() {
+    	int value1 = this.simple_expr.eval();
+    	int value2;
+    	int finalValue = value1;
+    	
+    	if(this.expr_dir != null) {
+	    	for(int i = 0; i < this.expr_dir.size(); i++) {
+	    		value2 = this.expr_dir.get(i).eval();
+	    		if(this.mult_operador.get(i).getOperador() == '*')
+	    			finalValue *= value2;
+	    		else if (this.mult_operador.get(i).getOperador() == '/')
+	    			finalValue /= value2;
+	    		else
+	    			finalValue %= value2;
+	    	}
+    	}
+    	
+    	return finalValue;
+    }
 }

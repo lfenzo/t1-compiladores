@@ -25,5 +25,12 @@ public class PrintStat extends Stat {
         
         return ident;
     }
+    
+    public void eval() {
+    	if(is_print_line)
+    		System.out.println(this.expr.eval());
+    	else
+    		System.out.print(this.expr.eval());
+    }
 
 }

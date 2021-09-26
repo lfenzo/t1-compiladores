@@ -33,4 +33,9 @@ public class Var extends SimpleExpr {
     		System.out.printf("%s", this.id);
     	return ident;
     }
+    
+    @Override
+    public int eval() {
+    	return this.getValue();
+    }
 }

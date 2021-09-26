@@ -39,4 +39,26 @@ public class RelExpr {
 	public void setDirExpr(AddExpr addExpr) {
 		this.expr_dir = addExpr;	
 	}
+	
+	public int eval() {
+		int value1 = this.expr_esq.eval();
+		int value2;
+		
+		if(this.expr_dir != null) {
+			value2 = this.expr_dir.eval();
+			if(this.operador.getOperador().equals("<"))
+				return value1 < value2 ? 1 : 0;
+			else if(this.operador.getOperador().equals("<="))
+				return value1 <= value2 ? 1 : 0;
+			else if(this.operador.getOperador().equals("=="))
+				return value1 == value2 ? 1 : 0;
+			else if(this.operador.getOperador().equals(">="))
+				return value1 >= value2 ? 1 : 0;
+			else if(this.operador.getOperador().equals(">"))
+				return value1 > value2 ? 1 : 0;
+			else	
+				return value1 != value2 ? 1 : 0;	
+		}
+		return value1;
+	}
 }

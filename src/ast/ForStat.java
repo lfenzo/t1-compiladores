@@ -35,8 +35,12 @@ public class ForStat extends Stat {
     public void eval() {
     	int beg = this.begin.eval();
     	int end = this.end.eval();
+    	this.iter.setValue(beg);
     	
-    	for(; beg < end; beg++) {
+    	for(this.iter.setValue(beg); 
+			this.iter.getValue() < end; 
+    		this.iter.setValue(this.iter.getValue() + 1)) 
+    	{
     		this.statlist.eval();
     	}
     }

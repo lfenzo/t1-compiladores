@@ -1,6 +1,7 @@
 var Int s;
 var Int i;
-s = 0;
+s = 42;
+println s;
 for j in 1..100 {
 s = s + j;
 }
