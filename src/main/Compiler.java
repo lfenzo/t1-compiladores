@@ -15,16 +15,14 @@ public class Compiler {
 	private int localValue;
 	private VarList vList;
 	
-	public Compiler() {
-		System.out.println("Voce instanciou um compilador");
-	}
-	
-	public Program compile(char []p_input) {
-        input = p_input;
-        //input[input.length] '\0';
-        tokenPos = 0;
+	public Program compile(char []p_input, char opcao) {
+		
+        this.input = p_input;
+        this.tokenPos = 0;
         this.vList = new VarList();
+        
         nextToken();
+        
         Program p = program();
         
         // token pos estarÃ¡ 1 posiÃ§[ao apos o termino da string de entrada.
@@ -32,8 +30,12 @@ public class Compiler {
         	error("Fim de arquivo nÃ£o esparado.");
         }
         
-        p.genC();
-        p.run();
+        if (opcao == 'g') {
+            p.genC();
+        }
+        else if (opcao == 'r') {
+            p.run();
+        }
         
         return p;
     }
@@ -93,7 +95,7 @@ public class Compiler {
 		}
 		
 		if(!is_for)
-			error("Variável não declarada");
+			error("Variï¿½vel nï¿½o declarada");
 		return null;
 	}
 	
@@ -215,7 +217,7 @@ public class Compiler {
 		Var v = this.getVar(id, true);
 		
 		if(v != null)
-			error("Variável do for não pode ter sido declarada antes");
+			error("Variï¿½vel do for nï¿½o pode ter sido declarada antes");
 		
 		v = new Var(id);
 		ForStat for_stat = new ForStat(v, begin_expr, end_expr, s);
@@ -229,9 +231,9 @@ public class Compiler {
 		
 		Var assign_var = new Var(ident);
 
-		// verifica se a variável à esquerda do '=' já foi declarada
+		// verifica se a variï¿½vel ï¿½ esquerda do '=' jï¿½ foi declarada
 		if ( !vList.varExists(assign_var) ) {
-			error("Variável '" + ident + "' não declarada.");
+			error("Variï¿½vel '" + ident + "' nï¿½o declarada.");
 		}
 		
 		this.nextToken(); // come o token "identificador"
@@ -380,7 +382,7 @@ public class Compiler {
 			break;
 		}
 		
-		error("Simple Expr inválido!");
+		error("Simple Expr invï¿½lido!");
 		return null;
 	}
 
