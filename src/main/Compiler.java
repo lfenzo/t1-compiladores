@@ -142,7 +142,7 @@ public class Compiler {
 		
 		if (token == Symbol.ELSE) {
 			this.nextToken(); // come o token "else"
-//			expr();
+//			Expr e_else = expr();
 			i.setStatlistElse(statList());
 		}
 		
@@ -204,21 +204,28 @@ public class Compiler {
 		
 		id = this.ident;
 		
-		this.checkSymbol(Symbol.IN);
-		
-		Expr begin_expr = expr();
-		
-		this.checkSymbol(Symbol.TWO_DOTS);
-		
-		Expr end_expr = expr();
-		StatList s = statList();
 		Var v = this.getVar(id, true);
 		
 		if(v != null)
 			error("Variável do for não pode ter sido declarada antes");
 		
+		this.checkSymbol(Symbol.IN);
+		
+		Expr begin_expr = expr();
+		
 		v = new Var(id);
+		v.setValue(begin_expr.eval());
+		
+		this.vList.addVar(v);
+		
+		this.checkSymbol(Symbol.TWO_DOTS);
+		
+		Expr end_expr = expr();
+		StatList s = statList();
+						
 		ForStat for_stat = new ForStat(v, begin_expr, end_expr, s);
+		
+		this.vList.removeVar(id);
 		
 		return for_stat;
 	}
@@ -227,10 +234,10 @@ public class Compiler {
 	private AssignStat assignStat() {
 		String ident = this.ident;
 		
-		Var assign_var = new Var(ident);
-
+		Var actual_var = this.vList.varExists(ident);
+//		Var actual_var = new Var(ident);
 		// verifica se a variável à esquerda do '=' já foi declarada
-		if ( !vList.varExists(assign_var) ) {
+		if ( vList.varExists(ident) == null) {
 			error("Variável '" + ident + "' não declarada.");
 		}
 		
@@ -240,9 +247,8 @@ public class Compiler {
 		Expr e = expr();
 		this.checkSymbol(Symbol.SEMICOLON);
 		
-		AssignStat a = new AssignStat(assign_var, e);
-		
-		assign_var.equals(e.eval());
+		actual_var.setValue(e.eval());
+		AssignStat a = new AssignStat(actual_var, e);
 		
 		return a;
 	}
@@ -373,8 +379,9 @@ public class Compiler {
 			return simpleExpr();
 		
 		case ID:
-			Var var_name = new Var (this.ident);
-			this.nextToken(); // come o token do identificado
+			Var var_name = new Var(this.ident);
+			var_name = this.vList.varExists(this.ident);
+			this.nextToken(); 
 			return var_name;
 		default:
 			break;

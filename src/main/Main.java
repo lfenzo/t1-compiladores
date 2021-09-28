@@ -8,7 +8,7 @@ public class Main {
 	public static void main(String []args) throws IOException {
 		
 		// carregando o arquivo a ser compilado para uma String
-		Path fileName = Path.of(System.getProperty("user.dir"), "src/main/teste.he");		
+		Path fileName = Path.of(System.getProperty("user.dir"), "src/main/teste_original.he");		
 		String str = Files.readString(fileName);
 		char []input = str.toCharArray();
 

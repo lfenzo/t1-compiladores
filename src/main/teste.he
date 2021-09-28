@@ -1,9 +1,12 @@
 var Int s;
 var Int i;
-s = 42;
-println s;
-for j in 1..100 {
-s = s + j;
+s = 0;
+while (s < 5) {
+	s = s + 1;
+	if s % 2 == 0 {
+		println s;
+	}
+	else {
+		println s;
+	}
 }
-println s;
-

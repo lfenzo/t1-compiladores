@@ -7,23 +7,28 @@ public class VarList {
     private ArrayList<Var> variaveis = new ArrayList<Var>();
 
     public void addVar(Var newvar) {
-        if (!varExists(newvar)) {
+        if (varExists(newvar.getId()) == null) {
             this.variaveis.add(newvar);
         }
         // TODO erro
     }
-
-    public boolean varExists(Var newvar) {
+    
+    public void removeVar(String ident) {
+    	for(int i = 0; i < this.variaveis.size(); i++) {
+    		if(this.variaveis.get(i).getId().equals(ident))
+    			this.variaveis.remove(i);
+    	}
+    }
+    
+    public Var varExists(String ident) {
         for (Var v : this.variaveis) {
-        	String new_id = newvar.getId();
-        	String var_id = v.getId();
 
         	// se for igual a 0 significa que as atrings são iguais
-        	if (var_id.compareTo(new_id) == 0) {
-        		return true;
+        	if (ident.compareTo(v.getId()) == 0) {
+        		return v;
         	}
         }
-        return false;
+        return null;
     }
     
     public int getSize() {
