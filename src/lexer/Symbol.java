@@ -33,7 +33,6 @@ public enum Symbol {
     
     // tokens de keywords e outros
     IF 				("if"),
-    INT				("Int"),
     ELSE			("else"),
     VAR				("var"),
     FOR				("for"),
@@ -41,7 +40,12 @@ public enum Symbol {
     PRINT			("print"),
     PRINT_LINE		("println"),
     ID				("Identifier"),
-    NUMBER			("Number");
+    NUMBER			("Number"),
+    
+    // tipos de variaveis
+    STRING			("String"),
+    BOOLEAN			("Boolean"),
+    INT				("Int");
 
 	Symbol(String name) {
         this.name = name;

@@ -76,15 +76,60 @@ public class Compiler {
 		
 		this.nextToken(); // come o token 'var'
 		
-		this.checkSymbol(Symbol.INT);
+		switch (token) {
+		
+		case BOOLEAN:
+			BooleanType b = booleanType();
+			break;
+		
+		case INT:
+			IntType i = intType();
+			break;
+		
+		case STRING:
+			StringType s = stringType();
+			break;
+	
+		default:
+			error("Erro interno no compilador");
+			break;
+		}
+		
+		//this.checkSymbol(Symbol.INT);
 		this.checkSymbol(Symbol.ID);
 		
 		id = this.ident;
+		
+		// TODO associar a cada variával o seu tipo
 		Var v = new Var(id);
 		
 		this.checkSymbol(Symbol.SEMICOLON);
 		
 		return v;
+	}
+	
+	private BooleanType booleanType() {
+		
+		this.nextToken(); // come o token "Boolean"
+		BooleanType b = new BooleanType("boolean");
+		
+		return b;
+	}	
+	
+	private IntType intType() {
+		
+		this.nextToken(); // come o token "Int"
+		IntType i = new IntType("int");
+		
+		return i;
+	}
+	
+	private StringType stringType() {
+		
+		this.nextToken(); // come o token "String"
+		StringType s = new StringType("string");
+		
+		return s;
 	}
 	
 	private Var getVar(String id, boolean is_for) {

@@ -4,6 +4,7 @@ public class Var extends SimpleExpr {
 
     private String id;
     private int value;
+    private Type type;
     private boolean isDeclared;
     
     public Var(String id) {
