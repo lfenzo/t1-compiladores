@@ -1,21 +1,21 @@
 package ast;
 
-public class Expr extends SimpleExpr{
+public class OrExpr extends SimpleExpr{
     
-	private OrExpr expr_esq;
-	private OrExpr expr_dir = null;
+	private AndExpr expr_esq;
+	private AndExpr expr_dir = null;
 	private String or_op;
 	
-	public Expr(OrExpr expr1, OrExpr expr2) {
+	public OrExpr(AndExpr expr1, AndExpr expr2) {
 		this.expr_esq = expr1;
 		this.expr_dir = expr2;
 	}
 	
-	public Expr(OrExpr expr) {
+	public OrExpr(AndExpr expr) {
 		this.expr_esq = expr;
 	}
 	
-	public void setExprDir(OrExpr expr_dir) {
+	public void setExprDir(AndExpr expr_dir) {
 		this.or_op = "||";
 		this.expr_dir = expr_dir;
 	}

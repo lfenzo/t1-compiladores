@@ -1,5 +1,5 @@
 var Int s;
-var Int i;
+var Boolean coisa;
 s = 0;
 while (s < 5) {
 	s = s + 1;

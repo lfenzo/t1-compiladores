@@ -61,7 +61,7 @@ public class Compiler {
 		return p;
 	}
 		
-	// VarList ::= { "var" Int Ident ";" }
+	// VarList ::= { "var" Type Ident ";" }
 	private void varlist() {
 				
 		while (token == Symbol.VAR) {
@@ -69,22 +69,66 @@ public class Compiler {
 		}
 	}
 	
-	// var ::= "var Int" ident ";"
 	private Var var() {
 		
 		String id;
 		
 		this.nextToken(); // come o token 'var'
 		
-		this.checkSymbol(Symbol.INT);
+		switch (token) {
+		
+		case BOOLEAN:
+			BooleanType b = booleanType();
+			break;
+		
+		case INT:
+			IntType i = intType();
+			break;
+		
+		case STRING:
+			StringType s = stringType();
+			break;
+	
+		default:
+			error("Erro interno no compilador");
+			break;
+		}
+		
+		//this.checkSymbol(Symbol.INT);
 		this.checkSymbol(Symbol.ID);
 		
 		id = this.ident;
+		
+		// TODO associar a cada variával o seu tipo
 		Var v = new Var(id);
 		
 		this.checkSymbol(Symbol.SEMICOLON);
 		
 		return v;
+	}
+	
+	private BooleanType booleanType() {
+		
+		this.nextToken(); // come o token "Boolean"
+		BooleanType b = new BooleanType("boolean");
+		
+		return b;
+	}	
+	
+	private IntType intType() {
+		
+		this.nextToken(); // come o token "Int"
+		IntType i = new IntType("int");
+		
+		return i;
+	}
+	
+	private StringType stringType() {
+		
+		this.nextToken(); // come o token "String"
+		StringType s = new StringType("string");
+		
+		return s;
 	}
 	
 	private Var getVar(String id, boolean is_for) {
@@ -239,7 +283,7 @@ public class Compiler {
 		Var actual_var = this.vList.varExists(ident);
 		
 		// verifica se a vari�vel � esquerda do '=' j� foi declarada
-		if ( vList.varExists(ident) == null) {
+		if ( vList.varExists(ident) == null ) {
 			error("Vari�vel '" + ident + "' n�o declarada.");
 		}
 		
@@ -255,10 +299,23 @@ public class Compiler {
 		return a;
 	}
 
-	//  Expr ::= AndExpr [ "||" AndExpr ]
+	// Expr ::= OrExpr { "++" OrExpr }
 	private Expr expr() {
 		
-		Expr e = new Expr (andExpr());
+		Expr e = new Expr(orExpr());
+		
+		if (token == Symbol.CONCAT) {
+			this.nextToken(); // come o "++"
+			e.setExprDir(orExpr()); 
+		}
+		
+		return e;
+	}
+
+	// OrExpr ::= AndExpr [ "||" AndExpr ]
+	private OrExpr orExpr() {
+		
+		OrExpr e = new OrExpr(andExpr());
 		
 		if (token == Symbol.OR) {
 			this.nextToken(); // come o "||"
@@ -506,6 +563,27 @@ public class Compiler {
 					token = Symbol.INT;
 					tokenPos += 3;
 				}
+				else if (tokenPos + 2 < input.length
+							&& input[tokenPos    ] == 'B'
+							&& input[tokenPos + 1] == 'o'
+							&& input[tokenPos + 2] == 'o'
+							&& input[tokenPos + 3] == 'l'
+							&& input[tokenPos + 4] == 'e'
+							&& input[tokenPos + 5] == 'a'
+							&& input[tokenPos + 6] == 'n') {
+					token = Symbol.BOOLEAN;
+					tokenPos += 7;
+				} 
+				else if (tokenPos + 2 < input.length
+							&& input[tokenPos    ] == 'S'
+							&& input[tokenPos + 1] == 't'
+							&& input[tokenPos + 2] == 'r'
+							&& input[tokenPos + 3] == 'i'
+							&& input[tokenPos + 4] == 'n'
+							&& input[tokenPos + 5] == 'g') {
+					token = Symbol.STRING;
+					tokenPos += 6;
+				}
 				else if (tokenPos + 4 < input.length
 							&& input[tokenPos    ] == 'w'
 							&& input[tokenPos + 1] == 'h'
@@ -606,8 +684,16 @@ public class Compiler {
 					break;
 					
 				case '+':
-					token = Symbol.PLUS;
+					
 					tokenPos++;
+					
+					// operador ++
+					if (tokenPos < input.length & input[tokenPos] == '+') {
+						token = Symbol.CONCAT;
+						tokenPos++;
+					} else
+						token = Symbol.PLUS;
+					
 					break;
 					
 				case '-':
@@ -616,13 +702,33 @@ public class Compiler {
 					break;
 					
 				case '*':
-					token = Symbol.MULT;
+					
 					tokenPos++;
-					break;	
+					
+					// */
+					if (tokenPos < input.length & input[tokenPos] == '/') {
+						token = Symbol.CLOSE_COMMENT;
+						tokenPos++;
+					} else
+						token = Symbol.MULT;
+					
+					break;
 				
 				case '/':
-					token = Symbol.DIV;
+					
 					tokenPos++;
+					
+					// '/*'
+					if (tokenPos < input.length & input[tokenPos] == '*') {
+						token = Symbol.OPEN_COMMENT;
+						tokenPos++;
+					} else if (tokenPos < input.length & input[tokenPos] == '/') {
+						token = Symbol.SINGLE_LINE_COMMENT;
+						tokenPos++;
+					}
+					else 
+						token = Symbol.DIV;
+					
 					break;
 					
 				case '%':
