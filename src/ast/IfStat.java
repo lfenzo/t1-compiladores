@@ -45,7 +45,7 @@ public class IfStat extends Stat {
             ident--;
             for(int i = 0; i < ident; i++)
             	System.out.print("\t");
-            System.out.println("\n");
+            System.out.println("}\n");
         }
         return ident;
     }
