@@ -13,9 +13,11 @@ public class Program {
     }
 
     public void genC() {
+        System.out.println("#include <stdbool.h>"); // adicionado para trabalhar com o tipo 'bool'
         System.out.println("#include <stdio.h>");
         System.out.println();
         System.out.println("void main(int argc, void *argv) {");
+        
         this.ident++;
         
         this.ident = this.varlist.genC(this.ident);
