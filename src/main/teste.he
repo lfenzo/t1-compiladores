@@ -1,12 +1,13 @@
 var Int s;
-var Boolean coisa;
-s = 0;
-while (s < 5) {
-	s = s + 1;
-	if s % 2 == 0 {
-		println s;
-	}
-	else {
-		println s;
-	}
+s = 10;
+
+while (s > 0) /*{
+	println s;
+	println s * 10;
+		s = s - 1;*/
+
+{
+println s * 10;	s = s - 1;
 }
+
+println s;

@@ -56,6 +56,10 @@ public class Compiler {
 			s.addStat(stat());
 		}
 		
+		if (token != Symbol.EOF) {
+			error(token + " Inesperado na linha " + lineNumber);
+		}
+		
 		Program p = new Program(vList, s);
 		
 		return p;
@@ -704,27 +708,45 @@ public class Compiler {
 				case '*':
 					
 					tokenPos++;
-					
-					// */
-					if (tokenPos < input.length & input[tokenPos] == '/') {
-						token = Symbol.CLOSE_COMMENT;
-						tokenPos++;
-					} else
-						token = Symbol.MULT;
+					token = Symbol.MULT;
 					
 					break;
 				
 				case '/':
 					
-					tokenPos++;
+					tokenPos++; // come o primeiro '/'
 					
-					// '/*'
+					// '/*': comenrário de multiplas linhas
 					if (tokenPos < input.length & input[tokenPos] == '*') {
-						token = Symbol.OPEN_COMMENT;
-						tokenPos++;
-					} else if (tokenPos < input.length & input[tokenPos] == '/') {
-						token = Symbol.SINGLE_LINE_COMMENT;
-						tokenPos++;
+						
+						tokenPos++; // come o '*'
+						
+						// come todos os caracteres até achar um "*/"
+						while (tokenPos < input.length + 1
+								&& !(input[tokenPos] == '*' && input[tokenPos + 1] == '/') ) {
+							
+							if (input[tokenPos] == '\n')
+								lineNumber++;
+							
+							tokenPos++;
+						}
+						
+						tokenPos += 2; // posiciona o tokenPos no começo do proximo token
+						nextToken();
+						
+					}
+					// '//': comentário de uma única linha
+					else if (tokenPos < input.length & input[tokenPos] == '/') {
+						
+						tokenPos ++; // come o segundo '/'
+					
+						// come todos os caracteres até achar um '\n'
+						while (tokenPos < input.length && input[tokenPos] != '\n') {
+							tokenPos++;
+						}
+					
+						lineNumber++;
+						nextToken();
 					}
 					else 
 						token = Symbol.DIV;

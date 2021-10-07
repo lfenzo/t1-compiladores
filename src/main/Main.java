@@ -11,7 +11,9 @@ public class Main {
 		
 		char []input = cli_parser.getInput();
 		
-		comp.compile(input, cli_parser.getOption());
+		char opt = cli_parser.getOption();
+		
+		comp.compile(input, opt);
 		
 	}
 }

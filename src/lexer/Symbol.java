@@ -31,9 +31,6 @@ public enum Symbol {
     AND					("&&"),
     OR					("||"),
     CONCAT				("++"),
-    SINGLE_LINE_COMMENT	("//"),
-    OPEN_COMMENT		("/*"),
-    CLOSE_COMMENT		("*/"),
     
     // tokens de keywords e outros
     IF 					("if"),
