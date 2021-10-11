@@ -11,6 +11,7 @@ public class Compiler {
 	private int lineNumber = 1;
 	private char []input;
 	private String ident;
+	private String string;
 	private Number number = new Number(0);
 	private int localValue;
 	private VarList vList;
@@ -440,12 +441,16 @@ public class Compiler {
 		case MINUS:
 			this.nextToken(); // come o operador -
 			return simpleExpr();
+			
+		case QUOTE:
+			return stringExpr();
 		
 		case ID:
 			Var var_name = new Var(this.ident);
 			var_name = this.vList.varExists(this.ident);
 			this.nextToken(); 
 			return var_name;
+		
 		default:
 			break;
 		}
@@ -453,11 +458,33 @@ public class Compiler {
 		error("Simple Expr inv�lido!");
 		return null;
 	}
+	
+	
 
+	private SimpleExpr stringExpr() {
+		
+		this.checkSymbol(Symbol.NUMBER); // come o "token" <"são paulo futebol clube">
+		
+		Expr e = new Expr();
+		
+		
+		return null;
+	}
+
+	// TODO fazer o mesom que fizemos para a string (so que com o boolean)
+//	private SimpleExpr stringExpr() {
+//		
+//		this.checkSymbol(Symbol.NUMBER); // come o "token" <"são paulo futebol clube">
+//		
+//		Expr e = new Expr();
+//		
+//		
+//		return null;
+//	}
+	
 	// Number ::= [’+’|’-’] Digit { Digit }
 	private Number number() {
 		if (token == Symbol.PLUS || token == Symbol.MINUS) {
-//			this.localValue *= -1;
 			this.nextToken();
 		}
 		
@@ -616,11 +643,9 @@ public class Compiler {
 				
 				this.localValue = ch - '0';
 				
-//				this.number.setValue(ch - '0');
 				tokenPos++;
 				
 				while ( tokenPos < input.length && Character.isDigit(ch = input[tokenPos]) ) {
-//					this.number.setValue(this.number.getValue() * 10 + (ch - '0'));
 					this.localValue = this.localValue * 10 + (ch - '0');
 					tokenPos++;
 				}
@@ -630,6 +655,25 @@ public class Compiler {
 			// tokens com 1 ou 2 characteres.
 			else {
 				switch (ch) {
+				
+					case '"':
+						
+					String s = "";
+					
+					tokenPos++; // come o token (") -- abrir string
+					
+					while ( tokenPos < input.length && input[tokenPos] != '"' ) {
+						s += input[tokenPos];
+						tokenPos++;
+					}
+					
+					this.string = s;
+					
+					tokenPos++; // passa o último (")
+					
+					token = Symbol.QUOTE;
+					
+					break;
 				
 				case '=':
 					

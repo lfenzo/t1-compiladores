@@ -5,7 +5,7 @@ public class IfStat extends Stat {
     private Expr expr;
     private StatList statlist_if; // statements para o caso do IF
     private StatList statlist_else = null; // statements para o caso do ELSE
-    
+    	
     // construtor para o IF e ELSE
     public IfStat(Expr expr, StatList statlist_if, StatList statlist_else) {
         this.expr = expr;

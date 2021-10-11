@@ -13,7 +13,6 @@ public class Main {
 		
 		char opt = cli_parser.getOption();
 		
-		comp.compile(input, opt);
-		
+		comp.compile(input, opt);		
 	}
 }

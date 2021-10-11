@@ -5,12 +5,15 @@ public class RelExpr {
 	private AddExpr expr_esq;
 	private AddExpr expr_dir = null;
 	private RelOp operador = null;
+	private Type tipo;
 	
 	// construtor para [ AddExpr RelOp Addexpr ] 
 	public RelExpr(AddExpr expr1, RelOp operador, AddExpr expr2) {
 		this.expr_esq = expr1;
 		this.operador = operador;
 		this.expr_dir = expr2;
+		
+		this.tipo = new BooleanType("boolean");
 	}
 	
 	// construtor para o caso [ AddExpr ]

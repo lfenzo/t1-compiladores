@@ -42,6 +42,7 @@ public enum Symbol {
     PRINT_LINE			("println"),
     ID					("Identifier"),
     NUMBER				("Number"),
+    QUOTE				("Quote"),
     
     // tipos de variáveis
     STRING				("String"),
