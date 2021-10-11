@@ -41,7 +41,7 @@ public class CompilerCliParser {
 	public char[] getInput() throws IOException {
 
 		// carregando o arquivo a ser compilado para uma String
-		Path fileName = Path.of(System.getProperty("user.dir"), "src/main/" + this.source_file);		
+		Path fileName = Path.of( this.source_file );		
 		String str = Files.readString(fileName);
 		
 		return str.toCharArray();
