@@ -1,16 +1,20 @@
 package ast;
 
 abstract public class Type {
-
+	
 	private String name;
 	
 	public Type(String name) {
 		this.name = name;
 	}
 	
+	public static Type booleanType 	= new BooleanType();
+	public static Type intType 		= new IntType();
+	public static Type stringType   = new StringType();
+	
 	public String getName() {
-		return this.name;
+		return name;
 	}
 	
-	abstract public void genC();
+	abstract public String getCname();
 }

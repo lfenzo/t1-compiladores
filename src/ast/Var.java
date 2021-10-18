@@ -3,11 +3,19 @@ package ast;
 public class Var extends SimpleExpr {
 
     private String id;
+    private Type type;
     private int value;
+    private String string_value;
     private boolean isDeclared;
     
     public Var(String id) {
         this.id = id;
+        isDeclared = false;
+    }
+    
+    public Var(String id, Type type) {
+        this.id = id;
+        this.type = type;
         isDeclared = false;
     }
 
@@ -19,8 +27,20 @@ public class Var extends SimpleExpr {
     	this.value = value;
     }
     
+    public void setValue(String string) {
+    	this.string_value = string;
+    }
+    
     public int getValue() {
     	return this.value;
+    }
+    
+    public Type getType() {
+    	return this.type;
+    }
+    
+    public void setType(Type t) {
+    	this.type = t;
     }
     
     @Override

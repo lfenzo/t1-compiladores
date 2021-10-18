@@ -1,0 +1,6 @@
+var String s;
+s = "testando strings";
+println s;
+
+//"String de teste 
+//"String de teste"

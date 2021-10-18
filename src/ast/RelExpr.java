@@ -13,7 +13,7 @@ public class RelExpr {
 		this.operador = operador;
 		this.expr_dir = expr2;
 		
-		this.tipo = new BooleanType("boolean");
+		this.tipo = new BooleanType();
 	}
 	
 	// construtor para o caso [ AddExpr ]

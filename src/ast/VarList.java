@@ -23,7 +23,7 @@ public class VarList {
     public Var varExists(String ident) {
         for (Var v : this.variaveis) {
 
-        	// se for igual a 0 significa que as atrings são iguais
+        	// se for igual a 0 significa que as atrings sï¿½o iguais
         	if (ident.compareTo(v.getId()) == 0) {
         		return v;
         	}
@@ -40,11 +40,18 @@ public class VarList {
     }
 
     public int genC(int ident) {
+    	
         for (Var v : this.variaveis) {
-            for(int i = 0; i < ident; i++)
+            
+        	for(int i = 0; i < ident; i++)
             	System.out.print("\t");
-        	System.out.printf("int %s;\n", v.getId());
+        
+        	if (v.getType() == Type.stringType)
+        		System.out.printf("char *%s;\n", v.getId());
+        	else
+        		System.out.printf("int %s;\n", v.getId());
         }
+        
         return ident;
     }
 }

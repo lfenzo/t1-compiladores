@@ -20,6 +20,11 @@ public class OrExpr extends SimpleExpr{
 		this.expr_dir = expr_dir;
 	}
 	
+	public void setType() {
+		// TODO Auto-generated method stub
+		
+	}
+	
 	public int genC(int ident) {
 		ident = this.expr_esq.genC(ident);
 		

@@ -74,69 +74,84 @@ public class Compiler {
 		}
 	}
 	
-	private Var var() {
+	private Type type() {
 		
-		String id;
-		
-		this.nextToken(); // come o token 'var'
+		Type result;
 		
 		switch (token) {
 		
-		case BOOLEAN:
-			BooleanType b = booleanType();
+		case INT :
+			result = Type.intType;
 			break;
 		
-		case INT:
-			IntType i = intType();
+		case BOOLEAN :
+			result = Type.booleanType;
+			break;
+			
+		case STRING :
+			result = Type.stringType;
 			break;
 		
-		case STRING:
-			StringType s = stringType();
-			break;
-	
-		default:
-			error("Erro interno no compilador");
-			break;
+		default :
+			error("Tipo da variavel esperado...");
+			result = null;
 		}
 		
-		//this.checkSymbol(Symbol.INT);
-		this.checkSymbol(Symbol.ID);
+		this.nextToken();
 		
+		return result;
+	}
+	
+	private Var var() {
+		
+		this.nextToken(); // come o token 'var'
+		
+		String id;
+		Type type = null;
+		
+		if (token == Symbol.BOOLEAN || token == Symbol.INT || token == Symbol.STRING) {
+			type = type(); // type() é responsável por comer o token do tipo
+		}
+		else
+			error("Identificador de tipo esperado...");
+			
+		this.checkSymbol(Symbol.ID); // tome o token que identifica a variavel
+				
 		id = this.ident;
 		
-		// TODO associar a cada variával o seu tipo
-		Var v = new Var(id);
+		Var v = new Var(id, type);
 		
 		this.checkSymbol(Symbol.SEMICOLON);
 		
 		return v;
 	}
 	
-	private BooleanType booleanType() {
-		
-		this.nextToken(); // come o token "Boolean"
-		BooleanType b = new BooleanType("boolean");
-		
-		return b;
-	}	
-	
-	private IntType intType() {
-		
-		this.nextToken(); // come o token "Int"
-		IntType i = new IntType("int");
-		
-		return i;
-	}
-	
-	private StringType stringType() {
-		
-		this.nextToken(); // come o token "String"
-		StringType s = new StringType("string");
-		
-		return s;
-	}
+//	private BooleanType booleanType() {
+//		
+//		this.nextToken(); // come o token "Boolean"
+//		BooleanType b = new BooleanType("boolean");
+//		
+//		return b;
+//	}	
+//	
+//	private IntType intType() {
+//		
+//		this.nextToken(); // come o token "Int"
+//		IntType i = new IntType("int");
+//		
+//		return i;
+//	}
+//	
+//	private StringType stringType() {
+//		
+//		this.nextToken(); // come o token "String"
+//		StringType s = new StringType("string");
+//		
+//		return s;
+//	}
 	
 	private Var getVar(String id, boolean is_for) {
+		
 		for(int i = 0; i < this.vList.getSize(); i++) {
 			if(this.vList.getElement(i).getId() == id) {
 				return this.vList.getElement(i);
@@ -144,7 +159,8 @@ public class Compiler {
 		}
 		
 		if(!is_for)
-			error("Vari�vel n�o declarada");
+			error("Variavel nao declarada");
+		
 		return null;
 	}
 	
@@ -287,9 +303,9 @@ public class Compiler {
 		
 		Var actual_var = this.vList.varExists(ident);
 		
-		// verifica se a vari�vel � esquerda do '=' j� foi declarada
+		// verifica se a variavel a esquerda do '=' ja foi declarada
 		if ( vList.varExists(ident) == null ) {
-			error("Vari�vel '" + ident + "' n�o declarada.");
+			error("Variavel '" + ident + "' nao declarada.");
 		}
 		
 		this.nextToken(); // come o token "identificador"
@@ -297,8 +313,14 @@ public class Compiler {
 		this.checkSymbol(Symbol.ASSIGN);
 		Expr e = expr();
 		this.checkSymbol(Symbol.SEMICOLON);
-		
-		actual_var.setValue(e.eval());
+				
+		// TODO achar um jeito de coloar o getType dentro de Expr (ja deveria estar la...)
+		if (actual_var.getType().getName() == "string") {
+			actual_var.setValue(this.string); // precisa trocar essa bosta depois.
+		}
+		else
+			actual_var.setValue(e.eval());	
+	
 		AssignStat a = new AssignStat(actual_var, e);
 		
 		return a;
@@ -311,6 +333,7 @@ public class Compiler {
 		
 		if (token == Symbol.CONCAT) {
 			this.nextToken(); // come o "++"
+			e.setType(Type.stringType);
 			e.setExprDir(orExpr()); 
 		}
 		
@@ -324,6 +347,7 @@ public class Compiler {
 		
 		if (token == Symbol.OR) {
 			this.nextToken(); // come o "||"
+			e.setType();
 			e.setExprDir(andExpr()); 
 		}
 		
@@ -382,10 +406,12 @@ public class Compiler {
 		char op = '+';
 		
 		while (token == Symbol.PLUS || token == Symbol.MINUS) {
+			
 			if(token == Symbol.PLUS)
 				op = '+';
 			else if(token == Symbol.MINUS)
 				op = '-';
+			
 			a.setOperator(op);
 			this.nextToken(); // come o operador (+ ou -)
 			a.setDirExpr(multExpr());
@@ -455,7 +481,7 @@ public class Compiler {
 			break;
 		}
 		
-		error("Simple Expr inv�lido!");
+		error("Simple Expr invalido!");
 		return null;
 	}
 	
@@ -463,12 +489,11 @@ public class Compiler {
 
 	private SimpleExpr stringExpr() {
 		
-		this.checkSymbol(Symbol.NUMBER); // come o "token" <"são paulo futebol clube">
+		this.checkSymbol(Symbol.QUOTE); // come o "token" <"sao paulo futebol clube">
 		
-		Expr e = new Expr();
+		SimpleExpr string_expr = new StringExpr(this.string); // 'string' eh o conteudo local da string
 		
-		
-		return null;
+		return string_expr;
 	}
 
 	// TODO fazer o mesom que fizemos para a string (so que com o boolean)

@@ -8,7 +8,7 @@ public class Main {
 		// na configuração que está roda o arquivo "teste.he"
 		CompilerCliParser cli_parser = new CompilerCliParser(args);
 		Compiler comp = new Compiler();
-		
+
 		char []input = cli_parser.getInput();
 		
 		char opt = cli_parser.getOption();
