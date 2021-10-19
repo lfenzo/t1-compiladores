@@ -126,29 +126,6 @@ public class Compiler {
 		return v;
 	}
 	
-//	private BooleanType booleanType() {
-//		
-//		this.nextToken(); // come o token "Boolean"
-//		BooleanType b = new BooleanType("boolean");
-//		
-//		return b;
-//	}	
-//	
-//	private IntType intType() {
-//		
-//		this.nextToken(); // come o token "Int"
-//		IntType i = new IntType("int");
-//		
-//		return i;
-//	}
-//	
-//	private StringType stringType() {
-//		
-//		this.nextToken(); // come o token "String"
-//		StringType s = new StringType("string");
-//		
-//		return s;
-//	}
 	
 	private Var getVar(String id, boolean is_for) {
 		
@@ -312,18 +289,18 @@ public class Compiler {
 		
 		this.checkSymbol(Symbol.ASSIGN);
 		Expr e = expr();
-		this.checkSymbol(Symbol.SEMICOLON);
-				
-		// TODO achar um jeito de coloar o getType dentro de Expr (ja deveria estar la...)
-		if (actual_var.getType().getName() == "string") {
-			actual_var.setValue(this.string); // precisa trocar essa bosta depois.
-		}
-		else
-			actual_var.setValue(e.eval());	
+		this.checkSymbol(Symbol.SEMICOLON);		
 	
-		AssignStat a = new AssignStat(actual_var, e);
+		if (e.getType() == actual_var.getType()) {
+			
+			AssignStat a = new AssignStat(actual_var, e);
+			return a;
 		
-		return a;
+		}
+		else {
+			error("Variavel '" + actual_var.getId() + "' nao eh do tipo '" + e.getType()+ "'.");
+			return null; // so para o eclpse não reclamar
+		}		
 	}
 
 	// Expr ::= OrExpr { "++" OrExpr }
@@ -347,7 +324,7 @@ public class Compiler {
 		
 		if (token == Symbol.OR) {
 			this.nextToken(); // come o "||"
-			e.setType();
+			e.setType(Type.booleanType);
 			e.setExprDir(andExpr()); 
 		}
 		
@@ -362,6 +339,7 @@ public class Compiler {
 		if (token == Symbol.AND) {
 			this.nextToken(); // come o '&&'
 			a.setOperator("&&");
+			a.setType(Type.booleanType);
 			a.setExprDir(relExpr());
 		}
 		
@@ -393,6 +371,7 @@ public class Compiler {
 			
 			r.setOperator(op);
 			this.nextToken(); // come o token do operador
+			r.setType(Type.booleanType);
 			r.setDirExpr(addExpr());
 		}
 		
@@ -412,9 +391,16 @@ public class Compiler {
 			else if(token == Symbol.MINUS)
 				op = '-';
 			
-			a.setOperator(op);
 			this.nextToken(); // come o operador (+ ou -)
-			a.setDirExpr(multExpr());
+			MultExpr right_expr = multExpr();
+			
+			if ( (right_expr.getType() == Type.intType) && (a.getType() == Type.intType)) {
+				a.setOperator(op);
+				a.setType(Type.intType);
+				a.setDirExpr(right_expr);
+			}
+			else 
+				error("Linha [" + lineNumber +"]: Variaveis pelo menos uma das variaveis não é do tipo inteiro...");
 		}
 		
 		return a;
@@ -436,6 +422,7 @@ public class Compiler {
 			
 			m.setOperator(op);
 			this.nextToken(); // come o operador (+ ou -)
+			m.setType(Type.intType);
 			m.setExprDir(simpleExpr());
 		}
 		
@@ -444,7 +431,7 @@ public class Compiler {
 
 	//	SimpleExpr ::= Number | ’(’ Expr ’)’ | "!" SimpleExpr| AddOp SimpleExpr | Ident
 	private SimpleExpr simpleExpr() {
-		
+				
 		switch (token) {
 		
 		case NUMBER:
@@ -486,7 +473,6 @@ public class Compiler {
 	}
 	
 	
-
 	private SimpleExpr stringExpr() {
 		
 		this.checkSymbol(Symbol.QUOTE); // come o "token" <"sao paulo futebol clube">
@@ -496,17 +482,6 @@ public class Compiler {
 		return string_expr;
 	}
 
-	// TODO fazer o mesom que fizemos para a string (so que com o boolean)
-//	private SimpleExpr stringExpr() {
-//		
-//		this.checkSymbol(Symbol.NUMBER); // come o "token" <"são paulo futebol clube">
-//		
-//		Expr e = new Expr();
-//		
-//		
-//		return null;
-//	}
-	
 	// Number ::= [’+’|’-’] Digit { Digit }
 	private Number number() {
 		if (token == Symbol.PLUS || token == Symbol.MINUS) {

@@ -17,10 +17,18 @@ public class PrintStat extends Stat {
     	for(int i = 0; i < ident; i++)
         	System.out.print("\t");
     	
+    	char percent;
+    	
+    	if (this.expr.getType() == Type.stringType) {
+    		percent = 's';
+    	}
+    	else
+    		percent = 'd';
+    	
         if(this.is_print_line)
-        	System.out.print("printf(\"%d\\n\", ");
+        	System.out.print("printf(\"%" + percent + "\\n\", ");
         else
-        	System.out.print("printf(\"%d\", ");
+        	System.out.print("printf(\" "+ percent + "\", ");
         
         ident = this.expr.genC(ident);
         System.out.println(");");

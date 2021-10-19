@@ -17,7 +17,29 @@ public class Expr extends SimpleExpr {
 	}
 	
 	public Type getType() {
-		return this.type;
+		
+		// expressão unaria (pode ser NumberExpr, VariableExpr, StringExpr ...?)
+		// desce até chegar ao tipo primitivo da expressão
+
+		if (this.type == null)
+			return this.expr_esq.getType();
+		else
+			return this.type;
+//		
+//		if (this.expr_dir == null) {
+//			return this.expr_esq.getType();
+//		}
+//		else {
+//			Type esq_type = expr_esq.getType();
+//			Type dir_type = expr_dir.getType();
+//
+//			// mudar depois
+//			if (esq_type == dir_type) {
+//				return dir_type;
+//			}
+//			else 
+//				return null;
+//		}
 	}
 	
 	public Expr(OrExpr expr) {
@@ -39,20 +61,31 @@ public class Expr extends SimpleExpr {
 		return ident;
 	}
 	
-	public int eval() {
+	public Object eval() {
 		
-		int value1 = this.expr_esq.eval();
-		int value2 = 0;
+		if (this.expr_esq.getType() == Type.intType) {
+			
+			Object value1 = this.expr_esq.eval();
+			Object value2 = null;
 		
-		if(this.expr_dir != null) {
-			value2 = this.expr_dir.eval();
+			if (this.expr_dir != null) {
+				
+				value2 = this.expr_dir.eval();
+				
+				if(value1 != null || value2 != null)
+					return Integer.valueOf(1);
+				
+				return Integer.valueOf(0);
+			}
 			
-			if(value1 != 0 || value2 != 0)
-				return 1;
-			
-			return 0;
+			return value1;
+		}
+		else if (this.expr_esq.getType() == Type.stringType) {
+			return String.valueOf(expr_esq.eval());
 		}
 		
-		return value1;
+		return null;
 	}
+		
+		
 }

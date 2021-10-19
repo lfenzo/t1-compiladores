@@ -4,10 +4,14 @@ public class Var extends SimpleExpr {
 
     private String id;
     private Type type;
-    private int value;
-    private String string_value;
+//    private Object value; // pode ser uma classe String, Int ou Boolean
+    private int 	value_int;
+    private String  value_string;
+    private boolean value_bool;
     private boolean isDeclared;
     
+    // orecisanis sumir ocm esse construtor para apenas poder constriur
+    // variaveis ja com tips.
     public Var(String id) {
         this.id = id;
         isDeclared = false;
@@ -23,24 +27,44 @@ public class Var extends SimpleExpr {
         return this.id;
     }
     
-    public void setValue(int value) {
-    	this.value = value;
-    }
-    
     public void setValue(String string) {
-    	this.string_value = string;
+    	this.value_string = string;
     }
     
-    public int getValue() {
-    	return this.value;
+    public void setValue(int valor) {
+    	this.value_int = valor;
+    }
+    
+    public void setValue(boolean bool) {
+    	this.value_bool = bool;
+    }
+    
+//    public void setValue(int value) {
+//    	this.value = value;
+//    }
+//    
+//    public void setValue(String string) {
+//    	this.string_value = string;
+//    }
+    
+    public Object getValue() {
+    	
+    	if (this.type == Type.booleanType)
+    		return this.value_bool;
+    
+    	else if (this.type == Type.intType)
+    		return this.value_int;
+    
+    	else
+    		return this.value_string;
     }
     
     public Type getType() {
     	return this.type;
     }
     
-    public void setType(Type t) {
-    	this.type = t;
+    public void setType(Type type) {
+    	this.type = type;
     }
     
     @Override
@@ -55,7 +79,18 @@ public class Var extends SimpleExpr {
     }
     
     @Override
-    public int eval() {
-    	return this.getValue();
+    public Object eval() {
+    	
+    	if (this.type == Type.intType) {
+    		return value_int;
+    	}
+    	else if (this.type == Type.stringType) {
+    		return value_string;
+    	}
+    	else if (this.type == Type.booleanType) {
+    		return value_bool;
+    	}
+    	else
+    		return null;
     }
 }

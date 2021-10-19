@@ -7,6 +7,7 @@ public class MultExpr {
     private SimpleExpr simple_expr = null;
     private ArrayList<MultOp> mult_operador = null;
     private ArrayList<SimpleExpr> expr_dir = null;
+    private Type type;
     
     public MultExpr(SimpleExpr expr_esq, MultOp op, SimpleExpr expr_dir) {
         this.simple_expr = expr_esq;
@@ -20,6 +21,17 @@ public class MultExpr {
 
     public MultExpr(SimpleExpr expr) {
         this.simple_expr = expr;
+    }
+    
+    public void setType(Type type) {
+    	this.type = type;
+    }
+    
+    public Type getType() {
+    	if (this.type == null)
+			return this.simple_expr.getType();
+		else
+			return this.type;
     }
     
     public void setOperator(char op) {
@@ -52,22 +64,26 @@ public class MultExpr {
         return ident;
     }
     
-    public int eval() {
-    	int value1 = this.simple_expr.eval();
-    	int value2;
-    	int finalValue = value1;
+    public Object eval() {
     	
-    	if(this.expr_dir != null) {
-	    	for(int i = 0; i < this.expr_dir.size(); i++) {
-	    		value2 = this.expr_dir.get(i).eval();
-	    		if(this.mult_operador.get(i).getOperador() == '*')
-	    			finalValue *= value2;
-	    		else if (this.mult_operador.get(i).getOperador() == '/')
-	    			finalValue /= value2;
-	    		else
-	    			finalValue %= value2;
-	    	}
-    	}
+    	Object value1 = this.simple_expr.eval();
+    	Object value2;
+    	Object finalValue = value1;
+    	
+//    	if (this.expr_dir != null) {
+//	    	
+//    		for (int i = 0; i < this.expr_dir.size(); i++) {
+//	    		
+//    			value2 = this.expr_dir.get(i).eval();
+//	    		
+//    			if(this.mult_operador.get(i).getOperador() == '*')
+//	    			finalValue *= value2;
+//	    		else if (this.mult_operador.get(i).getOperador() == '/')
+//	    			finalValue /= value2;
+//	    		else
+//	    			finalValue %= value2;
+//	    	}
+//    	}
     	
     	return finalValue;
     }

@@ -13,6 +13,25 @@ public class Main {
 		
 		char opt = cli_parser.getOption();
 		
+//		System.out.println(funcao(0));
+		
 		comp.compile(input, opt);		
 	}
+
+	public static Object funcao(int coisa) {
+		
+		Object value = 3;
+		
+//		value = String.valueOf("coisa");
+//		value = Integer.valueOf(10);
+		
+//		return value;
+		
+		if (coisa > 0)
+			return value;
+		else
+			return "coisa";
+	}
+
 }
+

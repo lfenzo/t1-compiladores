@@ -3,5 +3,6 @@ package ast;
 abstract public class SimpleExpr {
 		
     abstract int genC(int ident);
-    abstract int eval();
+    abstract Object eval();
+    abstract Type getType();
 }

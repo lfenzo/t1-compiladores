@@ -5,6 +5,7 @@ public class OrExpr extends SimpleExpr{
 	private AndExpr expr_esq;
 	private AndExpr expr_dir = null;
 	private String or_op;
+	private Type type; // deve ser BooleanType
 	
 	public OrExpr(AndExpr expr1, AndExpr expr2) {
 		this.expr_esq = expr1;
@@ -20,9 +21,15 @@ public class OrExpr extends SimpleExpr{
 		this.expr_dir = expr_dir;
 	}
 	
-	public void setType() {
-		// TODO Auto-generated method stub
-		
+	public void setType(Type type) {
+		this.type = type;
+	}
+	
+	public Type getType() {
+		if (this.type == null)
+			return this.expr_esq.getType();
+		else
+			return this.type;
 	}
 	
 	public int genC(int ident) {
@@ -35,15 +42,21 @@ public class OrExpr extends SimpleExpr{
 		return ident;
 	}
 	
-	public int eval() {
-		int value1 = this.expr_esq.eval();
-		int value2 = 0;
-		if(this.expr_dir != null) {
+	public Object eval() {
+		
+		Object value1 = this.expr_esq.eval();
+		Object value2 = 0;
+		
+		if (this.expr_dir != null) {
+			
 			value2 = this.expr_dir.eval();
-			if(value1 != 0 || value2 != 0)
+		
+			if (value1 != null || value2 != null)
 				return 1;
+			
 			return 0;
 		}
+		
 		return value1;
 	}
 }

@@ -1,7 +1,5 @@
 package ast;
 
-// colocar "extends Expr" também da erro pq o eval das duas é Int
-// faz mais sentido que StringExpr seja subclasse de SimpleExpr do que de Expr
 public class StringExpr extends SimpleExpr {
 
 	private String content;
@@ -16,8 +14,9 @@ public class StringExpr extends SimpleExpr {
         return ident;
 	}
 
-	public String eval() {
-		return 0;
+	@Override
+	public Object eval() {
+		return String.valueOf(this.content); // na pratica retorna uma string
 	}
 	
 	public String getValue() {

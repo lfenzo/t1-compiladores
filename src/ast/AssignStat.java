@@ -3,11 +3,13 @@ package ast;
 public class AssignStat extends Stat {
 
     private Var v;
-    private Expr expr; // 'expr' é uma subclasse de Expr
+    private Expr expr;
 
     public AssignStat(Var v, Expr expr) {
         this.v = v;
         this.expr = expr;
+        
+        this.eval();
     }
 
     @Override
@@ -23,6 +25,14 @@ public class AssignStat extends Stat {
     
     @Override
     public void eval() {
-    	this.v.setValue(this.expr.eval());
+    	
+    	Object value = this.expr.eval(); 
+    	
+    	if (expr.getType() == Type.stringType) {
+    		this.v.setValue(String.valueOf(value.toString()));
+    	}
+    	else if (expr.getType() == Type.intType) {
+        	this.v.setValue(Integer.valueOf(value.toString()));    		
+    	}
     }
 }

@@ -1,6 +1,8 @@
-var String s;
-s = "testando strings";
-println s;
+var Int a;
+var Int b;
+a = 123;
+b = 15;
 
-//"String de teste 
-//"String de teste"
+println a + b;
+println a;
+println b;
