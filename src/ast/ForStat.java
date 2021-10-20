@@ -2,12 +2,12 @@ package ast;
 
 public class ForStat extends Stat {
     
-    private Var iter; // variável para o iterador do 'for'
+    private Variable iter; // variável para o iterador do 'for'
     private Expr begin; // expressão que resulta no valor de inicio do for
     private Expr end; // expressão que resulta no valor final do 'for' 
     private StatList statlist; // lista de statements que devem ir dentro do for.
 
-    public ForStat(Var iter, Expr begin_expr, Expr end_expr, StatList statList) {
+    public ForStat(Variable iter, Expr begin_expr, Expr end_expr, StatList statList) {
         this.iter = iter;
         this.begin = begin_expr;
         this.end = end_expr;

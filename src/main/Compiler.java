@@ -12,7 +12,7 @@ public class Compiler {
 	private char []input;
 	private String ident;
 	private String string;
-	private Number number = new Number(0);
+	private boolean bool;
 	private int localValue;
 	private VarList vList;
 	
@@ -97,12 +97,12 @@ public class Compiler {
 			result = null;
 		}
 		
-		this.nextToken();
+		this.nextToken(); // come o token do tipo
 		
 		return result;
 	}
 	
-	private Var var() {
+	private Variable var() {
 		
 		this.nextToken(); // come o token 'var'
 		
@@ -119,7 +119,7 @@ public class Compiler {
 				
 		id = this.ident;
 		
-		Var v = new Var(id, type);
+		Variable v = new Variable(id, type);
 		
 		this.checkSymbol(Symbol.SEMICOLON);
 		
@@ -127,7 +127,7 @@ public class Compiler {
 	}
 	
 	
-	private Var getVar(String id, boolean is_for) {
+	private Variable getVar(String id, boolean is_for) {
 		
 		for(int i = 0; i < this.vList.getSize(); i++) {
 			if(this.vList.getElement(i).getId() == id) {
@@ -248,7 +248,7 @@ public class Compiler {
 		
 		id = this.ident;
 		
-		Var v = this.getVar(id, true);
+		Variable v = this.getVar(id, true);
 		
 		if(v != null)
 			error("Vari�vel do for n�o pode ter sido declarada antes");
@@ -257,7 +257,7 @@ public class Compiler {
 		
 		Expr begin_expr = expr();
 		
-		v = new Var(id);
+		v = new Variable(id);
 		v.setValue(begin_expr.eval());
 		
 		this.vList.addVar(v);
@@ -278,7 +278,7 @@ public class Compiler {
 	private AssignStat assignStat() {
 		String ident = this.ident;
 		
-		Var actual_var = this.vList.varExists(ident);
+		Variable actual_var = this.vList.varExists(ident);
 		
 		// verifica se a variavel a esquerda do '=' ja foi declarada
 		if ( vList.varExists(ident) == null ) {
@@ -298,7 +298,7 @@ public class Compiler {
 		
 		}
 		else {
-			error("Variavel '" + actual_var.getId() + "' nao eh do tipo '" + e.getType()+ "'.");
+			error("Assignment da variavel '" + actual_var.getId() + "' incompativel com o seu tipo.");
 			return null; // so para o eclpse não reclamar
 		}		
 	}
@@ -306,193 +306,211 @@ public class Compiler {
 	// Expr ::= OrExpr { "++" OrExpr }
 	private Expr expr() {
 		
-		Expr e = new Expr(orExpr());
-		
+		Expr left, right;
+		left = orExpr();
+				
 		if (token == Symbol.CONCAT) {
-			this.nextToken(); // come o "++"
-			e.setType(Type.stringType);
-			e.setExprDir(orExpr()); 
+			
+			this.nextToken(); // come o operador "++"
+			right = orExpr();
+			
+			if (left.getType() != Type.stringType || right.getType() != Type.stringType)
+				error("[Line " + this.lineNumber + "]: Expression of StringType expected...");
+			
+			left = new CompositeExpr(left, Symbol.CONCAT, right);
 		}
 		
-		return e;
+		return left;
 	}
 
 	// OrExpr ::= AndExpr [ "||" AndExpr ]
-	private OrExpr orExpr() {
+	private Expr orExpr() {
 		
-		OrExpr e = new OrExpr(andExpr());
+		Expr left, right;
+		left = andExpr();
 		
 		if (token == Symbol.OR) {
+			
 			this.nextToken(); // come o "||"
-			e.setType(Type.booleanType);
-			e.setExprDir(andExpr()); 
+			right = andExpr();
+			
+			if (left.getType() != Type.booleanType || right.getType() != Type.booleanType) 
+				error("[Line " + this.lineNumber + "]: Expression of BooleanType expected...");
+			
+			left = new CompositeExpr(left, Symbol.OR, right);
 		}
 		
-		return e;
+		return left;
 	}
 	
 	// AndExpr ::= RelExpr [ "&&" RelExpr ]
-	private AndExpr andExpr() {
+	private Expr andExpr() {
 		
-		AndExpr a = new AndExpr(relExpr());
+		Expr left, right;
+		left = relExpr();
 		
 		if (token == Symbol.AND) {
-			this.nextToken(); // come o '&&'
-			a.setOperator("&&");
-			a.setType(Type.booleanType);
-			a.setExprDir(relExpr());
+			
+			this.nextToken(); // come o operador "&&"
+			right = relExpr();
+			
+			if (left.getType() != Type.booleanType || right.getType() != Type.booleanType) 
+				error("[Line " + this.lineNumber + "]: Expression of BooleanType expected...");
+			
+			left = new CompositeExpr(left, Symbol.AND, right);
 		}
 		
-		return a;
+		return left;
 	}
 
 	// RelExpr ::= AddExpr [ RelOp AddExpr ]
-	private RelExpr relExpr() {
+	private Expr relExpr() {
 		
-		RelExpr r = new RelExpr(addExpr());
-		String op = "==";
+		Symbol op = token;
+		Expr left, right;
+		left = addExpr();
 		
-		if (token == Symbol.LT || token == Symbol.LE ||
-			token == Symbol.GT || token == Symbol.GE ||
-			token == Symbol.EQ || token == Symbol.NEQ) {
+		if (op == Symbol.EQ || op == Symbol.NEQ ||
+			op == Symbol.LE || op == Symbol.LT  ||
+			op == Symbol.GE || op == Symbol.GT) {
 			
-			if(token == Symbol.LT)
-				op = "<";
-			else if(token == Symbol.LE)
-				op = "<=";
-			else if(token == Symbol.GT)
-				op = ">";
-			else if(token == Symbol.GE)
-				op = ">=";
-			else if(token == Symbol.EQ)
-				op = "==";
-			else if(token == Symbol.LE)
-				op = "!=";
+			this.nextToken(); // come o operador (seja la ele qual for)
+			right = addExpr();
 			
-			r.setOperator(op);
-			this.nextToken(); // come o token do operador
-			r.setType(Type.booleanType);
-			r.setDirExpr(addExpr());
+			if (left.getType() != right.getType())
+				error("[Line " + this.lineNumber + "]: Type error in expression...");
+		
+			left = new CompositeExpr(left, op, right);
 		}
 		
-		return r;
+		return left;
 	}
 	
 	//	AddExpr ::= MultExpr { AddOp MultExpr }
-	private AddExpr addExpr() {
+	private Expr addExpr() {
 		
-		AddExpr a = new AddExpr(multExpr());
-		char op = '+';
+		Symbol op;
+		Expr left, right;
+		left = multExpr();
 		
-		while (token == Symbol.PLUS || token == Symbol.MINUS) {
+		while ( (op = token) == Symbol.PLUS || op == Symbol.MINUS) {
 			
-			if(token == Symbol.PLUS)
-				op = '+';
-			else if(token == Symbol.MINUS)
-				op = '-';
+			this.nextToken(); // come o token do operador
+			right = multExpr();
 			
-			this.nextToken(); // come o operador (+ ou -)
-			MultExpr right_expr = multExpr();
+			if (left.getType() != Type.intType || right.getType() != Type.intType)
+				error("[Line " + this.lineNumber + "]: Expression of type Int expected...");
 			
-			if ( (right_expr.getType() == Type.intType) && (a.getType() == Type.intType)) {
-				a.setOperator(op);
-				a.setType(Type.intType);
-				a.setDirExpr(right_expr);
-			}
-			else 
-				error("Linha [" + lineNumber +"]: Variaveis pelo menos uma das variaveis não é do tipo inteiro...");
+			left = new CompositeExpr(left, op, right);
 		}
 		
-		return a;
+		return left;
 	}
 
 	// MultExpr ::= SimpleExpr { MultOp SimpleExpr }
-	private MultExpr multExpr() {	
+	private Expr multExpr() {	
 		
-		MultExpr m = new MultExpr(simpleExpr());
-		char op = '*';
+		Symbol op;
+		Expr left, right;
+		left = simpleExpr();
 		
-		while (token == Symbol.MULT || token == Symbol.DIV || token == Symbol.PERC) {
-			if(token == Symbol.MULT)
-				op = '*';
-			else if(token == Symbol.DIV)
-				op = '/';
-			else if(token == Symbol.PERC)
-				op = '%';
+		while ( (op = token) == Symbol.MULT || op == Symbol.DIV || op == Symbol.PERC) {
 			
-			m.setOperator(op);
-			this.nextToken(); // come o operador (+ ou -)
-			m.setType(Type.intType);
-			m.setExprDir(simpleExpr());
+			this.nextToken(); // come o token do operador atual
+			right = simpleExpr();
+			
+			if (left.getType() != Type.intType || right.getType() != Type.intType)
+				error("[Line " + this.lineNumber + "]: Expression of type Int expected...");
+			
+			left = new CompositeExpr(left, op, right); 
 		}
 		
-		return m;
+		return left;
 	}
 
 	//	SimpleExpr ::= Number | ’(’ Expr ’)’ | "!" SimpleExpr| AddOp SimpleExpr | Ident
-	private SimpleExpr simpleExpr() {
+	private Expr simpleExpr() {
+		
+		Expr e;
 				
 		switch (token) {
 		
 		case NUMBER:
 			return number();
+			
+		case TRUE:
+			this.nextToken(); // come o token "true"
+			return new BooleanExpr(true);
+			
+		case FALSE:
+			this.nextToken(); // come o token "false"
+			return new BooleanExpr(false);
+			
+		case QUOTE:
+			return stringExpr();
 		
 		case OPEN_PAR:
 			this.nextToken(); // come o (
-			Expr e = expr();
+			e = expr();
 			this.checkSymbol(Symbol.CLOSE_PAR);
 			return e;
 			
 		case NOT:
 			this.nextToken(); // come o "!"
-			return simpleExpr();
+			e = expr();
+			
+			if (e.getType() != Type.booleanType)
+				error("[Line " + this.lineNumber + "]: Expression of type Boolean expected...");
+			
+			return new UnaryExpr(e, Symbol.NOT);
 			
 		case PLUS:
-			this.nextToken(); // come o operador +
-			return simpleExpr();
+			this.nextToken(); // come o operador "+"
+			e = expr();
+			
+			if (e.getType() != Type.intType)
+				error("[Line " + this.lineNumber + "]: Expression of type Int expected...");
+			
+			return new UnaryExpr(e, Symbol.PLUS);
 			
 		case MINUS:
-			this.nextToken(); // come o operador -
-			return simpleExpr();
+			this.nextToken(); // come o operador "-"
+			e = expr();
 			
-		case QUOTE:
-			return stringExpr();
-		
-		case ID:
-			Var var_name = new Var(this.ident);
-			var_name = this.vList.varExists(this.ident);
-			this.nextToken(); 
-			return var_name;
-		
-		default:
-			break;
+			if (e.getType() != Type.intType)
+				error("[Line " + this.lineNumber + "]: Expression of type Int expected...");
+			
+			return new UnaryExpr(e, Symbol.MINUS);
+	
+		default: // token == ID
+
+			if (token != Symbol.ID)
+				error("[Line " + this.lineNumber + "]: Expression of type Int expected...");
+			
+			Variable variable = this.vList.varExists(this.ident);
+			
+			if (variable == null)
+				error("[Line " + this.lineNumber + "]: Variable " + this.ident + " not declared...");
+			
+			this.nextToken(); // come o identificador da variavel
+			
+			return new VariableExpr(variable);
 		}
-		
-		error("Simple Expr invalido!");
-		return null;
 	}
 	
-	
-	private SimpleExpr stringExpr() {
+	private Expr stringExpr() {
 		
-		this.checkSymbol(Symbol.QUOTE); // come o "token" <"sao paulo futebol clube">
-		
-		SimpleExpr string_expr = new StringExpr(this.string); // 'string' eh o conteudo local da string
-		
+		this.checkSymbol(Symbol.QUOTE); // come o "token" que é a string inteira
+		Expr string_expr = new StringExpr(this.string); // 'string' eh o conteudo local da string
 		return string_expr;
 	}
 
 	// Number ::= [’+’|’-’] Digit { Digit }
-	private Number number() {
-		if (token == Symbol.PLUS || token == Symbol.MINUS) {
-			this.nextToken();
-		}
+	private NumberExpr number() {
 		
-		this.checkSymbol(Symbol.NUMBER);
-		
-		Number n = new Number(this.localValue);
-		
-		return n;
+		this.checkSymbol(Symbol.NUMBER); // come o token do numero e armazena o seu valor
+		NumberExpr number_expr = new NumberExpr(this.localValue);
+		return number_expr;
 	}
 
 	
@@ -545,6 +563,25 @@ public class Compiler {
 							&& input[tokenPos + 1] == 'n') {
 					token = Symbol.IN;
 					tokenPos += 2;
+				}
+				else if (tokenPos + 3 < input.length
+							&& input[tokenPos    ] == 't'
+							&& input[tokenPos + 1] == 'r'
+							&& input[tokenPos + 2] == 'u'
+							&& input[tokenPos + 3] == 'e') {
+					bool = true;
+					token = Symbol.TRUE;
+					tokenPos += 4;
+				}
+				else if (tokenPos + 4 < input.length
+							&& input[tokenPos    ] == 'f'
+							&& input[tokenPos + 1] == 'a'
+							&& input[tokenPos + 2] == 'l'
+							&& input[tokenPos + 3] == 's'
+							&& input[tokenPos + 4] == 'e') {
+					bool = false;
+					token = Symbol.FALSE;
+					tokenPos += 5;
 				}
 				else if (tokenPos + 1 < input.length
 							&& input[tokenPos    ] == 'i'

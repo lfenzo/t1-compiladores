@@ -1,8 +1,4 @@
 var Int a;
-var Int b;
-a = 123;
-b = 15;
+a = (10 + 20);
 
-println a + b;
 println a;
-println b;

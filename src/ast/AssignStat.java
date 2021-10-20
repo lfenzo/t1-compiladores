@@ -2,20 +2,22 @@ package ast;
 //
 public class AssignStat extends Stat {
 
-    private Var v;
+    private Variable v;
     private Expr expr;
 
-    public AssignStat(Var v, Expr expr) {
+    public AssignStat(Variable v, Expr expr) {
         this.v = v;
         this.expr = expr;
         
-        this.eval();
+        //this.eval(); // acho que tudo bem deixar o assignment fazer duas vezes
     }
 
     @Override
     public int genC(int ident) {
-        for(int i = 0; i < ident; i++)
+        
+    	for (int i = 0; i < ident; i++)
         	System.out.print("\t");
+    	
     	System.out.printf("%s = ", this.v.getId());
     	ident = this.expr.genC(ident);
         System.out.printf(";\n");
@@ -24,15 +26,9 @@ public class AssignStat extends Stat {
     }
     
     @Override
-    public void eval() {
+    public Object eval() {
     	
-    	Object value = this.expr.eval(); 
-    	
-    	if (expr.getType() == Type.stringType) {
-    		this.v.setValue(String.valueOf(value.toString()));
-    	}
-    	else if (expr.getType() == Type.intType) {
-        	this.v.setValue(Integer.valueOf(value.toString()));    		
-    	}
+    	this.v.setValue(this.expr.eval());
+    	return null;
     }
 }

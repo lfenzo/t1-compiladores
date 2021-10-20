@@ -1,11 +1,12 @@
 package ast;
 
 public class IntType extends Type {
-	
+
 	public IntType() {
 		super("integer");
 	}
 
+	
 	public void genC() {
 		System.out.println("int");
 	}

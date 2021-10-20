@@ -2,7 +2,7 @@ package ast;
 
 public class WhileStat extends Stat {
 
-    private Expr expr; // 'expr' é uma subclasse de Expr
+    private Expr expr;
     private StatList statlist; //  "statements" é uma classe com uma lista de subclasses de Stat
 
     public WhileStat(Expr expr, StatList statlist) {
@@ -13,21 +13,21 @@ public class WhileStat extends Stat {
     @Override
     public int genC(int ident) {
 
-        // while expr {
-        //   stat1
-        //   stat2
-        // }
     	for(int i = 0; i < ident; i++)
         	System.out.print("\t");
-        System.out.printf("while ( ");
+        
+    	System.out.printf("while ( ");
         ident = this.expr.genC(ident);
         System.out.printf(") {\n");
+        
         ident++;
         ident = this.statlist.genC(ident);
         ident--;
+        
         for(int i = 0; i < ident; i++)
         	System.out.print("\t");
         System.out.println("}");
+        
         return ident;
     }
     

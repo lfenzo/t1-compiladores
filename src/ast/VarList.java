@@ -4,9 +4,10 @@ import java.util.*;
 
 public class VarList {
 
-    private ArrayList<Var> variaveis = new ArrayList<Var>();
+    private ArrayList<Variable> variaveis = new ArrayList<Variable>();
 
-    public void addVar(Var newvar) {
+    public void addVar(Variable newvar) {
+    	
         if (varExists(newvar.getId()) == null) {
             this.variaveis.add(newvar);
         }
@@ -14,14 +15,15 @@ public class VarList {
     }
     
     public void removeVar(String ident) {
+    	
     	for(int i = 0; i < this.variaveis.size(); i++) {
     		if(this.variaveis.get(i).getId().equals(ident))
     			this.variaveis.remove(i);
     	}
     }
     
-    public Var varExists(String ident) {
-        for (Var v : this.variaveis) {
+    public Variable varExists(String ident) {
+        for (Variable v : this.variaveis) {
 
         	// se for igual a 0 significa que as atrings s�o iguais
         	if (ident.compareTo(v.getId()) == 0) {
@@ -35,13 +37,13 @@ public class VarList {
     	return this.variaveis.size();
     }
     
-    public Var getElement(int position) {
+    public Variable getElement(int position) {
     	return this.variaveis.get(position);
     }
 
     public int genC(int ident) {
     	
-        for (Var v : this.variaveis) {
+        for (Variable v : this.variaveis) {
             
         	for(int i = 0; i < ident; i++)
             	System.out.print("\t");

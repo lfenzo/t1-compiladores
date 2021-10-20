@@ -1,29 +1,30 @@
 package ast;
 
-public class StringExpr extends SimpleExpr {
+public class StringExpr extends Expr {
 
-	private String content;
+	private String value;
 	
 	public StringExpr(String string) {
-		this.content = string;
+		this.value = string;
 	}
 	
 	@Override
 	public int genC(int ident) {
-		System.out.printf("\"%s\"", this.content);
+		System.out.printf("\"%s\"", this.value);
         return ident;
 	}
 
 	@Override
 	public Object eval() {
-		return String.valueOf(this.content); // na pratica retorna uma string
+		return String.valueOf(this.value); // na pratica retorna uma string
+	}
+	
+	@Override
+	public Type getType() {
+		return Type.stringType;
 	}
 	
 	public String getValue() {
-		return this.content;
-	}
-	
-	public Type getType() {
-		return Type.stringType;
+		return this.value;
 	}
 }

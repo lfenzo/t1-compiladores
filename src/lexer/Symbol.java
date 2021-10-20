@@ -43,6 +43,8 @@ public enum Symbol {
     ID					("Identifier"),
     NUMBER				("Number"),
     QUOTE				("Quote"),
+    TRUE				("true"),
+    FALSE				("false"),
     
     // tipos de variáveis
     STRING				("String"),
