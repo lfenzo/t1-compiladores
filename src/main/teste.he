@@ -1,7 +1,35 @@
+var Boolean coisa;
+println !!coisa;
+
+/*
+var String coisa;
+coisa = "ze";
+
+var String outra;
+outra = "professor";
+
+var Boolean pamonha;
+pamonha = true;
+
+println coisa ++ outra ++ ((10 + 23) > 200) ++ 15;
 
 
+var Boolean a;
+a = true;
 
-/* TESTE COMEÇA ACIMA
+var Boolean b;
+b = true;
+
+if a {
+	
+	var Int outra_coisa;
+	a = true;
+	
+	println a;
+	println b;
+}
+
+
 var Int i;
 var Int soma;
 var Int somaFor;
@@ -31,7 +59,6 @@ for k in 0..100 {
 
 println soma;
 println somaFor;
-
 
 var String a;
 a = "pamonha";

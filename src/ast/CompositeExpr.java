@@ -91,15 +91,26 @@ public class CompositeExpr extends Expr {
 				String left  = (String) left_value;
 				String right = (String) right_value;	
 				
-				if 		(oper == Symbol.CONCAT) return left + right;
+				if 		(oper == Symbol.CONCAT) return left + right; // isso deveria estar aqui?
 				else if (oper == Symbol.EQ)		return left.equals(right);
 				else if (oper == Symbol.NEQ)	return !left.equals(right);
 				
 			}
 		}
+		// experimental
+		else if (type == Type.stringType) {
+			
+			Object left_value = this.left.eval();
+			Object right_value = this.right.eval();
+			
+			String left = (String) left_value.toString();
+			String right = (String) right_value.toString();
+			
+			if (oper == Symbol.CONCAT)
+				return left + right;
+		}
 		
-		// TODO Auto-generated method stub
-		return null;
+		return null; // <-- apenas para o eclipse não reclamar...
 	}
 	
 }

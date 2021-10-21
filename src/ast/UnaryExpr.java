@@ -55,6 +55,7 @@ public class UnaryExpr extends Expr {
     		if (this.oper == Symbol.NOT)
     			return !value;
     	}
+    	// não há expressões unarias com strings...
  
     	return null;
     }

@@ -45,15 +45,18 @@ public class Compiler {
 		
 		StatList s = new StatList();
 		
-		varlist();
-		
 		while (token == Symbol.FOR
 				|| token == Symbol.WHILE
 				|| token == Symbol.IF
 				|| token == Symbol.ID // assignStat é iniciado por um identificador
 				|| token == Symbol.PRINT
-				|| token == Symbol.PRINT_LINE) {
-			s.addStat(stat());
+				|| token == Symbol.PRINT_LINE
+				|| token == Symbol.VAR) {
+			
+			if (token == Symbol.VAR)
+				varlist(); // declaração de variavel não é um statement
+			else
+				s.addStat(stat());
 		}
 		
 		if (token != Symbol.EOF) {
@@ -67,7 +70,6 @@ public class Compiler {
 		
 	// VarList ::= { "var" Type Ident ";" }
 	private void varlist() {
-				
 		while (token == Symbol.VAR) {
 			this.vList.addVar(var());
 		}
@@ -105,7 +107,7 @@ public class Compiler {
 		
 		this.nextToken(); // come o token 'var'
 		
-		String id;
+		String id = null;
 		Type type = null;
 		
 		if (token == Symbol.BOOLEAN || token == Symbol.INT || token == Symbol.STRING) {
@@ -118,6 +120,10 @@ public class Compiler {
 				
 		id = this.ident;
 		
+		// checa se a variável prestes a ser declarada ja existe na VarList
+		if (this.getVar(id, true) != null)
+			error("[Line " + this.lineNumber + "]: Variável '" + id + "' já declarada anteriormente...");
+		
 		Variable v = new Variable(id, type);
 		
 		this.checkSymbol(Symbol.SEMICOLON);
@@ -128,13 +134,14 @@ public class Compiler {
 	
 	private Variable getVar(String id, boolean is_for) {
 		
-		for(int i = 0; i < this.vList.getSize(); i++) {
-			if(this.vList.getElement(i).getId() == id) {
+		for (int i = 0; i < this.vList.getSize(); i++) {
+			
+			if (this.vList.getElement(i).getId().equals(id)) {
 				return this.vList.getElement(i);
 			}
 		}
 		
-		if(!is_for)
+		if (!is_for)
 			error("Variavel nao declarada");
 		
 		return null;
@@ -154,7 +161,7 @@ public class Compiler {
 				
 		case PRINT: return printStat();
 			
-		case PRINT_LINE: return printlnStat(); 
+		case PRINT_LINE: return printlnStat();
 		
 		default:
 			error("Erro interno do compilador...");
@@ -204,8 +211,13 @@ public class Compiler {
 				|| token == Symbol.IF
 				|| token == Symbol.ID // assignStat começa com um identificador
 				|| token == Symbol.PRINT
-				|| token == Symbol.PRINT_LINE) {
-			s.addStat(stat());
+				|| token == Symbol.PRINT_LINE
+				|| token == Symbol.VAR) {
+			
+			if (token == Symbol.VAR)
+				varlist();
+			else
+				s.addStat(stat());
 		}
 		
 		this.checkSymbol(Symbol.CLOSE_CBRACES);
@@ -308,14 +320,16 @@ public class Compiler {
 		
 		Expr left, right;
 		left = orExpr();
-				
-		if (token == Symbol.CONCAT) {
+		
+		while (token == Symbol.CONCAT) {
+//		if (token == Symbol.CONCAT) {
 			
 			this.nextToken(); // come o operador "++"
 			right = orExpr();
 			
-			if (left.getType() != Type.stringType || right.getType() != Type.stringType)
-				error("[Line " + this.lineNumber + "]: Expression of StringType expected...");
+			// pode ser necessario remover esse if já que CONCAT funciona com todos os tipos.
+//			if (left.getType() != Type.stringType || right.getType() != Type.stringType)
+//				error("[Line " + this.lineNumber + "]: Expression of StringType expected...");
 			
 			left = new CompositeExpr(left, Symbol.CONCAT, right);
 		}
