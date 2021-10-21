@@ -12,7 +12,17 @@ public class Main {
 		
 		char opt = cli_parser.getOption();
 
-		comp.compile(input, opt);		
+		comp.compile(input, opt);
+}
+	
+	public static void teste() {
+		
+		String a = "abc";
+		String b = "z";
+		
+		// negativo significa que o que está a esquerda tem que vir antes na ordem alfabetica
+		System.out.println(a.compareTo(b));
+		
 	}
 }
 

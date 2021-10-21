@@ -1,7 +1,23 @@
-var Boolean coisa;
-println !!coisa;
+println  "zambia" > "albania" ;
+
 
 /*
+var String coisa;
+coisa  = "teste";
+println coisa ++ " com imterpolação";
+
+
+var Int n;
+n = 0;
+
+for i in 1..10 {
+	println i % 2 == 0;
+}
+
+var Boolean coisa;
+coisa = true;
+println !!coisa == true;
+
 var String coisa;
 coisa = "ze";
 
@@ -13,6 +29,8 @@ pamonha = true;
 
 println coisa ++ outra ++ ((10 + 23) > 200) ++ 15;
 
+/*
+println true ++ 1 ++ " tone";
 
 var Boolean a;
 a = true;
@@ -28,7 +46,6 @@ if a {
 	println a;
 	println b;
 }
-
 
 var Int i;
 var Int soma;

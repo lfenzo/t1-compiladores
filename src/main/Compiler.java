@@ -173,7 +173,12 @@ public class Compiler {
 	private WhileStat whileStat() {
 		this.nextToken(); // come o token "while"
 				
+		// condição do while
 		Expr e = expr();
+		
+		if (e.getType() != Type.booleanType)
+			error("[Line " + this.lineNumber + "]: As expressões do WHILE devem ser do tipo Boolean...");
+		
 		StatList s = statList();
 		
 		WhileStat w = new WhileStat(e, s);
@@ -186,6 +191,10 @@ public class Compiler {
 		this.nextToken(); // come o token "if"
 		
 		Expr e = expr();
+		
+		if (e.getType() != Type.booleanType)
+			error("[Line " + this.lineNumber + "]: As expressões do IF devem ser do tipo Boolean...");
+		
 		StatList s = statList();
 		
 		IfStat i = new IfStat(e, s);
@@ -261,7 +270,7 @@ public class Compiler {
 		
 		Variable v = this.getVar(id, true);
 		
-		if(v != null)
+		if (v != null)
 			error("Variavel do for nao pode ter sido declarada antes");
 		
 		this.checkSymbol(Symbol.IN);
@@ -277,6 +286,10 @@ public class Compiler {
 		this.checkSymbol(Symbol.TWO_DOTS);
 		
 		Expr end_expr = expr();
+		
+		if (end_expr.getType() != Type.intType || begin_expr.getType() != Type.intType)
+			error("[Line " + this.lineNumber + "]: Expressões do for devem ser do tipo Integer...");
+		
 		StatList s = statList();
 						
 		ForStat for_stat = new ForStat(v, begin_expr, end_expr, s);
@@ -471,7 +484,8 @@ public class Compiler {
 			
 		case NOT:
 			this.nextToken(); // come o "!"
-			e = expr();
+//			e = expr(); // modificado para corrigir o bug true ++ 1 \\ !true ++ 1
+			e = orExpr();
 			
 			if (e.getType() != Type.booleanType)
 				error("[Line " + this.lineNumber + "]: Expression of type Boolean expected...");

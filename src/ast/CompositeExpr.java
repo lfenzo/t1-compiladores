@@ -66,6 +66,7 @@ public class CompositeExpr extends Expr {
 			Object left_value  = this.left.eval();
 			Object right_value = this.right.eval();
 			
+			// integers
 			if ((left_value.getClass() == Integer.class) && (right_value.getClass() == Integer.class)) {
 				
 				int left  = (int) left_value;
@@ -78,14 +79,29 @@ public class CompositeExpr extends Expr {
 				else if (oper == Symbol.GT)  return (left >  right);
 				else if (oper == Symbol.GE)  return (left >= right);
 			}
+			// boolean
 			else if ((left_value.getClass() == Boolean.class) && (right_value.getClass() == Boolean.class)) {
 				
 				boolean left  = (boolean) left_value;
 				boolean right = (boolean) right_value;
 				
+				//
+				// >> Gambiarra ***ExTrEmE*** <<
+				//
+				int bool_left = String.valueOf(left).length();
+				int bool_right = String.valueOf(right).length();
+				
 				if      (oper == Symbol.AND) return (left && right);
 				else if (oper == Symbol.OR)  return (left || right);
+				else if (oper == Symbol.EQ)  return (left == right);
+				else if (oper == Symbol.NEQ) return (left != right);
+				
+				else if (oper == Symbol.GT)  return bool_left >  bool_right;
+				else if (oper == Symbol.LE)  return bool_left >= bool_right;
+				else if (oper == Symbol.LT)  return bool_left <  bool_right;
+				else if (oper == Symbol.LE)  return bool_left <= bool_right;
 			}
+			// strings
 			else if ((left_value.getClass() == String.class) && (right_value.getClass() == String.class)) {
 				
 				String left  = (String) left_value;
@@ -95,6 +111,10 @@ public class CompositeExpr extends Expr {
 				else if (oper == Symbol.EQ)		return left.equals(right);
 				else if (oper == Symbol.NEQ)	return !left.equals(right);
 				
+				else if (oper == Symbol.GT)     return (left.compareTo(right) >  0);
+				else if (oper == Symbol.GE)     return (left.compareTo(right) >= 0);
+				else if (oper == Symbol.LT)     return (left.compareTo(right) <  0);
+				else if (oper == Symbol.LE)     return (left.compareTo(right) <= 0);
 			}
 		}
 		// experimental
