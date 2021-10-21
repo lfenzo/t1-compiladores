@@ -21,7 +21,6 @@ public class VariableExpr extends Expr {
 
 	@Override
 	public Object eval() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.v.getValue(); // "eval" na variavel significa obter o valor dela.
 	}	
 }

@@ -7,8 +7,7 @@ public class PrintStat extends Stat {
 
     public PrintStat(Expr expr, boolean is_print_line) {
         this.expr = expr;
-        // especifica se deve ser printado uma linha ou não ao final
-        this.is_print_line = is_print_line;
+        this.is_print_line = is_print_line;  // especifica se deve ser printado uma linha ou não ao final
     }
 
     @Override
@@ -19,13 +18,12 @@ public class PrintStat extends Stat {
     	
     	char percent;
     	
-    	if (this.expr.getType() == Type.stringType) {
+    	if (this.expr.getType() == Type.stringType)
     		percent = 's';
-    	}
     	else
     		percent = 'd';
     	
-        if(this.is_print_line)
+        if (this.is_print_line)
         	System.out.print("printf(\"%" + percent + "\\n\", ");
         else
         	System.out.print("printf(\" "+ percent + "\", ");
@@ -36,11 +34,13 @@ public class PrintStat extends Stat {
         return ident;
     }
     
-    public void eval() {
-    	if(is_print_line)
+    public Object eval() {
+    	
+    	if (is_print_line)
     		System.out.println(this.expr.eval());
     	else
     		System.out.print(this.expr.eval());
+		
+    	return null;
     }
-
 }

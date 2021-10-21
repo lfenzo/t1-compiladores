@@ -34,20 +34,28 @@ public class UnaryExpr extends Expr {
 	
     @Override
     public Object eval() {
-        
-//    	if (oper == Symbol.PLUS)
-//            return + expr.eval();
-//        
-//        else if (oper == Symbol.MINUS)
-//            return - expr.eval();
-//        
-//        else
-//        
-//        	if (expr.eval() == 0)
-//                return 1;
-//            
-//        	else
-//                return 0;
+    	
+    	Type type = this.getType();
+    	
+    	if (type == Type.intType) {
+    		
+    		int value = (int) this.expr.eval();
+    		
+    		if (this.oper == Symbol.PLUS)
+    			return value;
+    	
+    		else if (this.oper == Symbol.MINUS)
+    			return -value;
+    		
+    	}
+    	else if (type == Type.booleanType) {
+    		
+    		boolean value = (boolean) this.expr.eval();
+    		
+    		if (this.oper == Symbol.NOT)
+    			return !value;
+    	}
+ 
     	return null;
     }
 

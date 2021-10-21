@@ -1,7 +1,6 @@
 package main;
 
 import ast.*;
-import ast.Number;
 import lexer.Symbol;
 
 public class Compiler {
@@ -186,7 +185,7 @@ public class Compiler {
 		
 		if (token == Symbol.ELSE) {
 			this.nextToken(); // come o token "else"
-//			Expr e_else = expr();
+//			Expr e_else = expr(); (não tem "else if")
 			i.setStatlistElse(statList());
 		}
 		
@@ -244,21 +243,22 @@ public class Compiler {
 		String id;
 		
 		this.nextToken(); // come o token 'for'
-		this.checkSymbol(Symbol.ID);
+		this.checkSymbol(Symbol.ID); // come o iterador do for
 		
 		id = this.ident;
 		
 		Variable v = this.getVar(id, true);
 		
 		if(v != null)
-			error("Vari�vel do for n�o pode ter sido declarada antes");
+			error("Variavel do for nao pode ter sido declarada antes");
 		
 		this.checkSymbol(Symbol.IN);
 		
 		Expr begin_expr = expr();
 		
 		v = new Variable(id);
-		v.setValue(begin_expr.eval());
+		v.setValue(begin_expr.eval()); // talvez precise setar o tipo do iterador tbm
+		v.setType(Type.intType);
 		
 		this.vList.addVar(v);
 		
@@ -366,9 +366,9 @@ public class Compiler {
 	// RelExpr ::= AddExpr [ RelOp AddExpr ]
 	private Expr relExpr() {
 		
-		Symbol op = token;
 		Expr left, right;
 		left = addExpr();
+		Symbol op = token;
 		
 		if (op == Symbol.EQ || op == Symbol.NEQ ||
 			op == Symbol.LE || op == Symbol.LT  ||

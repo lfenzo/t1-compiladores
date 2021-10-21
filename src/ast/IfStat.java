@@ -50,14 +50,17 @@ public class IfStat extends Stat {
         return ident;
     }
     
-    public void eval() {
-    	int val = this.expr.eval();
+    public Object eval() {
     	
-    	if(val != 0) {
+    	boolean val = (boolean) this.expr.eval();
+    	
+    	if (val == true)
     		statlist_if.eval();
-    	} else {
-    		if(statlist_else != null)
+    	
+    	else
+    		if (statlist_else != null)
     			statlist_else.eval();
-    	} 		
+    	
+		return null; 		
     }
 }

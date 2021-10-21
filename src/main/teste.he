@@ -1,4 +1,43 @@
-var Int a;
-a = (10 + 20);
 
-println a;
+
+
+/* TESTE COMEÇA ACIMA
+var Int i;
+var Int soma;
+var Int somaFor;
+var Int n;
+var Boolean verd;
+
+n = 100;
+soma = 0;
+i = 0;
+verd = false;
+
+while i <= n && !verd { 
+  if i%2 == (0+0*0/1) {
+	soma = (--soma) + i*i;
+  }
+  i = i + 1;
+}
+
+
+somaFor = 0;
+
+for k in 0..100 {
+  if k%2 == 0 {
+	somaFor = somaFor + k*k;
+  }
+}
+
+println soma;
+println somaFor;
+
+
+var String a;
+a = "pamonha";
+for k in 1..(1 + 10) {
+	
+	if (k % 2 == 0) {
+		println a;
+	}	
+}*/

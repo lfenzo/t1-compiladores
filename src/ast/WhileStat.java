@@ -13,31 +13,34 @@ public class WhileStat extends Stat {
     @Override
     public int genC(int ident) {
 
-    	for(int i = 0; i < ident; i++)
+    	for (int i = 0; i < ident; i++)
         	System.out.print("\t");
         
     	System.out.printf("while ( ");
         ident = this.expr.genC(ident);
         System.out.printf(") {\n");
-        
+       
         ident++;
         ident = this.statlist.genC(ident);
         ident--;
         
-        for(int i = 0; i < ident; i++)
+        for (int i = 0; i < ident; i++)
         	System.out.print("\t");
+        
         System.out.println("}");
         
         return ident;
     }
     
-    public void eval() {
-    	int val = this.expr.eval();
+    public Object eval() {
     	
-    	while(val != 0) {
+    	boolean val = (boolean) this.expr.eval(); // condição do while
+    	
+    	while (val == true) {
     		this.statlist.eval();
-    		
-    		val = this.expr.eval();
+    		val = (boolean) this.expr.eval();
     	}
+    	
+    	return null;
     }
 }
