@@ -376,8 +376,9 @@ public class Compiler {
 		Expr left, right;
 		left = relExpr();
 		
-		if (token == Symbol.AND) {
-			
+//		if (token == Symbol.AND) {
+		while (token == Symbol.AND) {
+		
 			this.nextToken(); // come o operador "&&"
 			right = relExpr();
 			

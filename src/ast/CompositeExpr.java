@@ -97,7 +97,7 @@ public class CompositeExpr extends Expr {
 				else if (oper == Symbol.NEQ) return (left != right);
 				
 				else if (oper == Symbol.GT)  return bool_left >  bool_right;
-				else if (oper == Symbol.LE)  return bool_left >= bool_right;
+				else if (oper == Symbol.GE)  return bool_left >= bool_right;
 				else if (oper == Symbol.LT)  return bool_left <  bool_right;
 				else if (oper == Symbol.LE)  return bool_left <= bool_right;
 			}
