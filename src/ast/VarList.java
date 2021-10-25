@@ -23,13 +23,11 @@ public class VarList {
     }
     
     public Variable varExists(String ident) {
-        for (Variable v : this.variaveis) {
-
-        	// se for igual a 0 significa que as atrings s�o iguais
-        	if (ident.compareTo(v.getId()) == 0) {
+    	
+        for (Variable v : this.variaveis)
+        	if (ident.compareTo(v.getId()) == 0)
         		return v;
-        	}
-        }
+
         return null;
     }
     
@@ -45,12 +43,16 @@ public class VarList {
     	
         for (Variable v : this.variaveis) {
             
-        	for(int i = 0; i < ident; i++)
+        	for (int i = 0; i < ident; i++)
             	System.out.print("\t");
         
         	if (v.getType() == Type.stringType)
         		System.out.printf("char *%s;\n", v.getId());
-        	else
+        	
+        	else if (v.getType() == Type.booleanType)
+        		System.out.printf("bool %s;\n", v.getId());
+        	
+        	else if (v.getType() == Type.intType)
         		System.out.printf("int %s;\n", v.getId());
         }
         

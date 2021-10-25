@@ -52,7 +52,7 @@ if soma == somaFor {
 else {
 	println "Alguma coisa errada! Soma != SomaFor";
 }
-if 0 < 1 && true <= false &&
+if 0 < 1 && true >= false &&
    "abc" < "cba" && "A" == "A" {
   println "Ufa, deu certo!";
 }

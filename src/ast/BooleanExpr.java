@@ -13,7 +13,7 @@ public class BooleanExpr extends Expr {
 	
 	@Override
 	public int genC(int identation) {
-		System.out.printf( this.value ? "1" : "0" );
+		System.out.printf( this.value ? "true" : "false" );
         return identation;
 	}
 

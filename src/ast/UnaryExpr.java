@@ -14,20 +14,28 @@ public class UnaryExpr extends Expr {
 
 	@Override
 	public int genC(int identation) {
-
+		
 		switch (this.oper) {
 		
-		case PLUS: System.out.print("+"); break;
+		case PLUS:
+			System.out.print("+");
+			this.expr.genC(identation);
+			break;
 			
-		case MINUS: System.out.print("-"); break;
+		case MINUS:
+			System.out.print("-(");
+			this.expr.genC(identation);
+			System.out.print(")");
+			break;
 			
-		case NOT: System.out.print("!"); break;
+		case NOT:
+			System.out.print("!");
+			this.expr.genC(identation);
+			break;
 		
 		default: break;
 		
 		}
-		
-		this.expr.genC(identation);
 		
 		return identation;
 	}

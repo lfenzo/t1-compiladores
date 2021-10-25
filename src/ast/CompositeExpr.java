@@ -16,13 +16,58 @@ public class CompositeExpr extends Expr {
 	@Override
 	public int genC(int identation) {
 		
-		System.out.print("(");
-		this.left.genC(identation);
-		
-		System.out.print(" " + oper.toString() + " ");
-		
-		this.right.genC(identation);
-		System.out.print(")");
+		if (this.getType() == Type.stringType) {
+			
+			System.out.print("plusPlus(");
+			
+			//
+			// conversão de tipos da expressao a esquerda
+			//
+			if (this.left.getType() == Type.intType) {
+				System.out.print("int2str(");
+				this.left.genC(identation);
+				System.out.print(")");
+			}
+			else if (this.left.getType() == Type.booleanType) {
+				System.out.print("bool2str(");
+				this.left.genC(identation);
+				System.out.print(")");
+			}
+			else if (this.left.getType() == Type.stringType) {
+				this.left.genC(identation);
+			}
+			
+			System.out.print(", ");
+			
+			//
+			// Conversão de tipos da expressao a direita
+			//
+			if (this.right.getType() == Type.intType) {
+				System.out.print("int2str(");
+				this.right.genC(identation);
+				System.out.print(")");
+			}
+			else if (this.right.getType() == Type.booleanType) {
+				System.out.print("bool2str(");
+				this.right.genC(identation);
+				System.out.print(")");
+			}
+			else if (this.right.getType() == Type.stringType) {
+				this.right.genC(identation);
+			}
+			
+			System.out.print(")");
+		}
+		// tipos bool e integer
+		else {
+			System.out.print("(");
+			this.left.genC(identation);
+			
+			System.out.print(" " + oper.toString() + " ");
+			
+			this.right.genC(identation);
+			System.out.print(")");
+		}
 
 		return identation;
 	}
@@ -96,10 +141,10 @@ public class CompositeExpr extends Expr {
 				else if (oper == Symbol.EQ)  return (left == right);
 				else if (oper == Symbol.NEQ) return (left != right);
 				
-				else if (oper == Symbol.GT)  return bool_left >  bool_right;
-				else if (oper == Symbol.GE)  return bool_left >= bool_right;
-				else if (oper == Symbol.LT)  return bool_left <  bool_right;
-				else if (oper == Symbol.LE)  return bool_left <= bool_right;
+				else if (oper == Symbol.GT)  return !(bool_left >  bool_right);
+				else if (oper == Symbol.GE)  return !(bool_left >= bool_right);
+				else if (oper == Symbol.LT)  return !(bool_left <  bool_right);
+				else if (oper == Symbol.LE)  return !(bool_left <= bool_right);
 			}
 			// strings
 			else if ((left_value.getClass() == String.class) && (right_value.getClass() == String.class)) {
